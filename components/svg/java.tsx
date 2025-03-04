@@ -1,7 +1,6 @@
 import * as React from "react"
-import type { SVGProps } from "react"
 
-const Java = (props: SVGProps<SVGSVGElement>) => (
+const Java = () => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="0.74em"
