@@ -16,13 +16,13 @@ const ProjectItem = ({ title, description, url, category }: Project) => {
             <div className="flex gap-2 items-center">
                 <h3 className="text-black dark:text-white">{title}</h3>
                 {category === "react" ? (
-                    <React className="grayscale-0 md:grayscale opacity-100 md:opacity-50 md:group-hover:grayscale-0 md:group-hover:opacity-100" />
+                    <React />
                 ) : category === "python" ? (
-                    <Python className="grayscale-0 md:grayscale opacity-100 md:opacity-50 md:group-hover:grayscale-0 md:group-hover:opacity-100" />
+                    <Python />
                 ) : category === "php" ? (
-                    <Php className="grayscale-0 md:grayscale opacity-100 md:opacity-50 md:group-hover:grayscale-0 md:group-hover:opacity-100" />
+                    <Php />
                 ) : (
-                    <Java className="grayscale-0 md:grayscale opacity-100 md:opacity-50 md:group-hover:grayscale-0 md:group-hover:opacity-100" />
+                    <Java />
                 )}
             </div>
             <Balancer>
