@@ -2,12 +2,12 @@ import { Post } from "@/lib/types"
 
 const posts = [
     {
-        slug: "post-test",
-        title: "Test Post",
+        slug: "the-best-python-program-architecture",
+        title: "The Best Python Program Architecture",
         description:
-            "This is a test post to see if the blog is working correctly.",
+            "In this article, we will see the best architecture for Python programs.",
         date: "2025-03-04",
-        tags: ["Test", "Test2"],
+        tags: ["Python", "Tips"],
     },
 ] as Post[]
 

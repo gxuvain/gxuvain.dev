@@ -12,3 +12,8 @@ export interface Post {
     date: string
     tags?: string[]
 }
+
+export interface Technologies {
+    name: string
+    category: "frontend" | "backend" | "databases" | "version control" | "other"
+}

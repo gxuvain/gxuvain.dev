@@ -9,7 +9,7 @@ const Hero = () => {
         <div className="flex flex-col mx-auto">
             <div className="flex items-center gap-4 md:gap-8 mt-20 md:mt-32">
                 <Image
-                    src="/assets/avatar.jpeg"
+                    src="/assets/avatar.jpg"
                     alt="Avatar"
                     width={600}
                     height={600}
