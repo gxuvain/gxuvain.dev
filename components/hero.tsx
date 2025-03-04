@@ -1,32 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
-import { unstable_ViewTransition as ViewTransition } from "react";
 import Github from "@/components/svg/github";
 import X from "@/components/svg/x";
+import { unstable_ViewTransition as ViewTransition } from "react";
 
 const Hero = () => {
     return (
         <div>
             <div className="flex items-center gap-4 md:gap-8 mt-20 md:mt-32">
-                <Image
-                    src="/assets/avatar.jpeg"
-                    alt="Avatar"
-                    width={600}
-                    height={600}
-                    className="rounded-full h-16 w-16 md:h-24 md:w-24"
-                />
-
+                <ViewTransition name="avatar">
+                    <Image
+                        src="/assets/avatar.jpeg"
+                        alt="Avatar"
+                        width={600}
+                        height={600}
+                        className="rounded-full h-16 w-16 md:h-24 md:w-24"
+                    />
+                </ViewTransition>
                 <h1 className="text-2xl md:text-3xl text-black">
-                    Hi, there! 👋
+                    Hi! Gauvain There 👋
                 </h1>
             </div>
-            <h2>Gauvain Palanga</h2>
-
             <div className="mt-6 md:mt-10 max-w-[900px] text-sm md:text-base">
-                I am Gauvain, a passionate computer science student, who wants
-                to share his love for software development. Currently, I am
-                working for a company called ENGLAB, where I create Python and
-                React applications.
+                I am Gauvain Palanga, a passionate computer science student, who
+                wants to share his love for software development. Currently, I
+                am working for a company called ENGLAB, where I create Python
+                and React applications.
             </div>
             <div className="mt-8 flex gap-8 items-center">
                 <Link
