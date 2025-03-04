@@ -1,8 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
-import Github from "@/components/svg/github";
-import X from "@/components/svg/x";
-import Balancer from "react-wrap-balancer";
+import Github from "@/components/svg/github"
+import X from "@/components/svg/x"
+import Image from "next/image"
+import Link from "next/link"
+import Balancer from "react-wrap-balancer"
 
 const Hero = () => {
     return (
@@ -29,7 +29,7 @@ const Hero = () => {
                 <Link
                     href="https://x.com/gxuvain"
                     target="_blank"
-                    className="flex items-center gap-2 hover:text-black group text-sm md:text-base"
+                    className="flex items-center gap-2 group text-sm md:text-base"
                 >
                     <X />
                     Twitter
@@ -38,14 +38,14 @@ const Hero = () => {
                 <Link
                     href="https://github.com/gxuvain"
                     target="_blank"
-                    className="flex items-center gap-2 hover:text-black group text-sm md:text-base"
+                    className="flex items-center gap-2 group text-sm md:text-base"
                 >
                     <Github />
                     GitHub
                 </Link>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Hero;
+export default Hero

@@ -1,7 +1,9 @@
-import Image from "next/image";
-
 const About = () => {
-    return <div></div>;
-};
+    return (
+        <div>
+            <h1>Comming soon...</h1>
+        </div>
+    )
+}
 
-export default About;
+export default About

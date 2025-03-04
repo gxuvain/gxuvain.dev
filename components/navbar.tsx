@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import ThemeSwitcher from "./theme-switcher";
+import ThemeSwitcher from "./theme-switcher"
+import { cn } from "@/lib/utils"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 const links = [
     {
@@ -18,10 +18,10 @@ const links = [
         path: "/blog",
         label: "Blog",
     },
-];
+]
 
 const Navbar = () => {
-    const currentPathname = `/${usePathname().split("/")[1]}`;
+    const currentPathname = `/${usePathname().split("/")[1]}`
 
     return (
         <nav className="mt-12 flex items-center space-x-6 md:space-x-12">
@@ -41,7 +41,7 @@ const Navbar = () => {
             ))}
             <ThemeSwitcher />
         </nav>
-    );
-};
+    )
+}
 
-export default Navbar;
+export default Navbar

@@ -1,4 +1,4 @@
-import { Post } from "@/lib/types";
+import { Post } from "@/lib/types"
 
 const posts = [
     {
@@ -9,6 +9,6 @@ const posts = [
         date: "2025-03-04",
         tags: ["Test", "Test2"],
     },
-] as Post[];
+] as Post[]
 
-export default posts;
+export default posts

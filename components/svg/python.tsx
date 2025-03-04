@@ -1,5 +1,5 @@
-import * as React from "react";
-import type { SVGProps } from "react";
+import * as React from "react"
+import type { SVGProps } from "react"
 
 const Python = (props: SVGProps<SVGSVGElement>) => (
     <svg
@@ -59,5 +59,5 @@ const Python = (props: SVGProps<SVGSVGElement>) => (
             opacity=".444"
         />
     </svg>
-);
-export default Python;
+)
+export default Python

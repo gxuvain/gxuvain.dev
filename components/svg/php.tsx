@@ -1,5 +1,5 @@
-import * as React from "react";
-import type { SVGProps } from "react";
+import * as React from "react"
+import type { SVGProps } from "react"
 
 const Php = (props: SVGProps<SVGSVGElement>) => (
     <svg
@@ -47,5 +47,5 @@ const Php = (props: SVGProps<SVGSVGElement>) => (
             </radialGradient>
         </defs>
     </svg>
-);
-export default Php;
+)
+export default Php

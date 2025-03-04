@@ -1,5 +1,5 @@
-import ProjectItem from "./project";
-import { Project } from "@/lib/types";
+import ProjectItem from "./project"
+import { Project } from "@/lib/types"
 
 const projects: Project[] = [
     {
@@ -37,7 +37,7 @@ const projects: Project[] = [
         url: "https://example.com",
         category: "python",
     },
-];
+]
 
 const Projects = () => {
     return (
@@ -46,13 +46,13 @@ const Projects = () => {
                 Projects
             </h2>
 
-            <div className="mt-8 md:mt-16 space-y-8 md:space-y-12">
+            <div className="mt-8 md:mt-16 space-y-8 md:space-y-12 mb-20">
                 {projects.map((project, index) => (
                     <ProjectItem key={index} {...project} />
                 ))}
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Projects;
+export default Projects

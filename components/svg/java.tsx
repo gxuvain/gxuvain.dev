@@ -1,5 +1,5 @@
-import * as React from "react";
-import type { SVGProps } from "react";
+import * as React from "react"
+import type { SVGProps } from "react"
 
 const Java = (props: SVGProps<SVGSVGElement>) => (
     <svg
@@ -29,5 +29,5 @@ const Java = (props: SVGProps<SVGSVGElement>) => (
             d="M95.268 344.665c62.199 3.982 157.712-2.209 159.974-31.64c0 0-4.348 11.158-51.404 20.018c-53.088 9.99-118.564 8.824-157.399 2.421c.001 0 7.95 6.58 48.83 9.201"
         />
     </svg>
-);
-export default Java;
+)
+export default Java
