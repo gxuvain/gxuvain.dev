@@ -2,47 +2,45 @@ import Image from "next/image";
 import Link from "next/link";
 import Github from "@/components/svg/github";
 import X from "@/components/svg/x";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import Balancer from "react-wrap-balancer";
 
 const Hero = () => {
     return (
-        <div>
+        <div className="flex flex-col mx-auto">
             <div className="flex items-center gap-4 md:gap-8 mt-20 md:mt-32">
-                <ViewTransition name="avatar">
-                    <Image
-                        src="/assets/avatar.jpeg"
-                        alt="Avatar"
-                        width={600}
-                        height={600}
-                        className="rounded-full h-16 w-16 md:h-24 md:w-24"
-                    />
-                </ViewTransition>
-                <h1 className="text-2xl md:text-3xl text-black">
-                    Hi! Gauvain There 👋
-                </h1>
+                <Image
+                    src="/assets/avatar.jpeg"
+                    alt="Avatar"
+                    width={600}
+                    height={600}
+                    className="rounded-full h-16 w-16 md:h-24 md:w-24"
+                />
+                <h1 className="text-2xl md:text-3xl">Hi! Welcome 👋</h1>
             </div>
-            <div className="mt-6 md:mt-10 max-w-[900px] text-sm md:text-base">
-                I am Gauvain Palanga, a passionate computer science student, who
-                wants to share his love for software development. Currently, I
-                am working for a company called ENGLAB, where I create Python
-                and React applications.
-            </div>
+            <Balancer>
+                <p className="mt-6 md:mt-10 max-w-3xl text-sm md:text-base">
+                    I am Gauvain Palanga, a passionate computer science student,
+                    who wants to share his love for software development.
+                    Currently, I am working for a company called ENGLAB, where I
+                    create Python and React applications.
+                </p>
+            </Balancer>
             <div className="mt-8 flex gap-8 items-center">
                 <Link
-                    href="https://x.com/1weiho"
+                    href="https://x.com/gxuvain"
                     target="_blank"
-                    className="flex items-center gap-2 hover:text-black duration-300 group text-sm md:text-base"
+                    className="flex items-center gap-2 hover:text-black group text-sm md:text-base"
                 >
-                    <X className="grayscale-0 md:grayscale opacity-100 md:opacity-50 transition-all duration-300 md:group-hover:grayscale-0 md:group-hover:opacity-100" />
+                    <X />
                     Twitter
                 </Link>
 
                 <Link
-                    href="https://github.com/1weiho"
+                    href="https://github.com/gxuvain"
                     target="_blank"
-                    className="flex items-center gap-2 hover:text-black duration-300 group text-sm md:text-base"
+                    className="flex items-center gap-2 hover:text-black group text-sm md:text-base"
                 >
-                    <Github className="grayscale-0 md:grayscale opacity-100 md:opacity-50 transition-all duration-300 md:group-hover:grayscale-0 md:group-hover:opacity-100" />
+                    <Github />
                     GitHub
                 </Link>
             </div>

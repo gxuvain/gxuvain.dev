@@ -2,7 +2,7 @@ export interface Project {
     title: string;
     description: string;
     url: string;
-    category: "Python" | "React" | "Java" | "PHP";
+    category: "python" | "react" | "java" | "php";
 }
 
 export interface Post {

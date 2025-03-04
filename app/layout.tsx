@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import LightRay from "@/components/light-ray";
+import { Analytics } from "@vercel/analytics/next";
+import { Providers } from "./providers";
+import Balancer, { Provider } from "react-wrap-balancer";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -26,15 +28,20 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <div className="container mx-auto font-[family-name:var(--font-geist-mono)] px-6 justify-center items-center">
-                    <Navbar />
-                    {children}
-                </div>
-                <Footer />
+                <Provider>
+                    <Providers>
+                        <div className="container mx-auto max-w-3xl font-[family-name:var(--font-geist-mono)] px-6">
+                            <Navbar />
+                            {children}
+                            <Footer />
+                        </div>
+                    </Providers>
+                </Provider>
+                <Analytics />
             </body>
         </html>
     );

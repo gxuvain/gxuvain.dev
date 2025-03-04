@@ -3,35 +3,48 @@ import { Project } from "@/lib/types";
 
 const projects: Project[] = [
     {
-        title: "Project 1",
-        description: "Description 1",
+        title: "gxuvain.dev",
+        description:
+            "My personal website built with Next.js focusing on clean design and performance. The blog section is integrated to share my programming journey and tech insights.",
         url: "https://example.com",
-        category: "Python",
+        category: "react",
     },
     {
-        title: "Project 2",
-        description: "Description 2",
+        title: "Bookmarks",
+        description:
+            "Bookmarks is a web application written in PHP, that allows users to create and share custom pages to organize their discoveries, tips, and inspirations in the form of bookmarks (Marks). This platform aims to transform traditional bookmarks into an interactive and creative space.",
         url: "https://example.com",
-        category: "React",
+        category: "php",
     },
     {
-        title: "Project 3",
-        description: "Description 3",
+        title: "LinkUp",
+        description:
+            "LinkUp is a Discord clone application, built in Java, a text communication software designed for gaming communities. It allows users to create servers, text channels, send messages, and share files.",
         url: "https://example.com",
-        category: "Java",
+        category: "java",
     },
     {
-        title: "Project 4",
-        description: "Description 4",
+        title: "SPARQ-Inspection",
+        description:
+            "SPARQ-Inspection is a web application built with FastAPI and React, to manage and prepare datasets, train AI models, and use them on a fully automated industrial production line.",
         url: "https://example.com",
-        category: "PHP",
+        category: "python",
+    },
+    {
+        title: "Trex",
+        description:
+            "SPARQ-Inspection is a web application built with FastAPI (Python) and React, to manage and prepare datasets, train AI models, and use them on a fully automated industrial production line.",
+        url: "https://example.com",
+        category: "python",
     },
 ];
 
 const Projects = () => {
     return (
         <div className="md:mt-40 mt-20">
-            <h2 className="mt-16 text-2xl text-black">Projects</h2>
+            <h2 className="mt-16 text-2xl text-black dark:text-white">
+                Projects
+            </h2>
 
             <div className="mt-8 md:mt-16 space-y-8 md:space-y-12">
                 {projects.map((project, index) => (

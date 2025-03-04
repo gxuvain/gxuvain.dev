@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ThemeSwitcher from "./theme-switcher";
 
 const links = [
     {
@@ -23,18 +24,22 @@ const Navbar = () => {
     const currentPathname = `/${usePathname().split("/")[1]}`;
 
     return (
-        <nav className="mt-12 flex space-x-6 md:space-x-12">
+        <nav className="mt-12 flex items-center space-x-6 md:space-x-12">
             {links.map((link) => (
                 <Link
                     key={link.path}
                     href={link.path}
                     className={cn(
-                        link.path === currentPathname && "text-black"
+                        "transition-colors hover:text-gray-800 dark:hover:text-gray-200",
+                        link.path === currentPathname
+                            ? "text-black dark:text-white font-medium"
+                            : "text-gray-600 dark:text-gray-400"
                     )}
                 >
                     {link.label}
                 </Link>
             ))}
+            <ThemeSwitcher />
         </nav>
     );
 };
