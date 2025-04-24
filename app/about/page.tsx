@@ -1,4 +1,16 @@
 import Technologies from "@/components/technologies"
+import { generateOgImageUrl } from "@/lib/utils"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "About | Gauvain Palanga",
+    description: "More about me.",
+    openGraph: {
+        title: "About | Gauvain Palanga",
+        description: "More about me.",
+        images: [{ url: generateOgImageUrl("About"), alt: "gxuvain.dev" }],
+    },
+}
 
 const About = () => {
     return (
