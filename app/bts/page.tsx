@@ -175,7 +175,7 @@ const BTSPage: FC = () => {
                     Récapitulatif des projets
                 </h2>
                 <div className="space-y-12">
-                    {projects.map((project, index) => (
+                    {projects.map((project) => (
                         <div
                             key={project.id}
                             className="space-y-6 bg-muted/50 p-6 rounded-lg"
@@ -256,7 +256,7 @@ const BTSPage: FC = () => {
 
                             <div className="mt-6">
                                 <h4 className="font-semibold mb-3">
-                                    Captures d'écran
+                                    Captures d&apos;écran
                                 </h4>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                     {project.screenshots.map(
