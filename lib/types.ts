@@ -17,3 +17,10 @@ export interface Technologies {
     name: string
     category: "frontend" | "backend" | "databases" | "version control" | "other"
 }
+
+export interface AboutMe {
+    description: string
+    skills: string[]
+    future: string[]
+    footer: string
+}
