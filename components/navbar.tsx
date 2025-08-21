@@ -20,10 +20,6 @@ const links = [
     path: "/blog",
     label: "Blog",
   },
-  {
-    path: "/bts",
-    label: "BTS SIO",
-  },
 ];
 
 function Navbar() {
