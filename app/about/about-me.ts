@@ -11,7 +11,13 @@ const aboutMe = {
   future: [
     "I want to learn Rust 🦀 and I really want to learn functional programming languages, especially OCaml 🐫.",
   ],
-  footer: "Thank you for taking the time to read a little bit about me. If you want, you can check out my other blog posts. If you want to support me, you can http://www.buymeacoffee.com/gxuvain.",
+  footer: {
+    text: "Thank you for taking the time to read a little bit about me. If you want, you can check out my other blog posts. If you want to support me, you can",
+    link: {
+      url: "http://www.buymeacoffee.com/gxuvain",
+      label: "buy me a coffee!",
+    },
+  },
 };
 
 export default aboutMe;

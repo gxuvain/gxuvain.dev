@@ -34,8 +34,8 @@ function ProjectItem({ title, description, url, category }: Project) {
                   <Java />
                 )}
       </div>
-      <Balancer>
-        <p className="mt-2 text-xs md:text-sm">{description}</p>
+      <Balancer className="mt-2 text-xs md:text-sm">
+        {description}
       </Balancer>
     </Link>
   );

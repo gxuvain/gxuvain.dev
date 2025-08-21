@@ -11,7 +11,18 @@ function AboutMeSection({ description, skills, future, footer }: AboutMe) {
       </ul>
       <p>What i want to learn</p>
       <p>{future}</p>
-      <p>{footer}</p>
+      <p>
+        {footer.text}
+        {" "}
+        <a
+          href={footer.link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 underline"
+        >
+          {footer.link.label}
+        </a>
+      </p>
     </>
   );
 }

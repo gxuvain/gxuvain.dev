@@ -22,5 +22,11 @@ export type AboutMe = {
   description: string;
   skills: string[];
   future: string[];
-  footer: string;
+  footer: {
+    text: string;
+    link: {
+      url: string;
+      label: string;
+    };
+  };
 };

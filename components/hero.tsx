@@ -18,13 +18,11 @@ function Hero() {
         />
         <h1 className="text-2xl md:text-3xl">Hi! Welcome 👋</h1>
       </div>
-      <Balancer>
-        <p className="mt-6 md:mt-10 max-w-3xl text-sm md:text-base">
-          I am Gauvain Palanga, a passionate computer science student,
-          who wants to share his love for software development.
-          Currently, I am working for a company called ENGLAB, where I
-          create Python and React applications.
-        </p>
+      <Balancer className="mt-6 md:mt-10 max-w-3xl text-sm md:text-base">
+        I am Gauvain Palanga, a passionate computer science student,
+        who wants to share his love for software development.
+        Currently, I am working for a company called ENGLAB, where I
+        create Python and React applications.
       </Balancer>
       <div className="mt-8 flex gap-8 items-center">
         <Link
