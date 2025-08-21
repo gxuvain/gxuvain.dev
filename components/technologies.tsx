@@ -1,4 +1,4 @@
-import type { Technologies } from "@/lib/types"
+import type { Technologies } from "@/lib/types";
 
 // const technologies = [
 //     {
@@ -71,12 +71,12 @@ import type { Technologies } from "@/lib/types"
 //     },
 // ] as Technologies[]
 
-const Technologies = () => {
-    return (
-        <div className="flex flex-col flex-wrap justify-center gap-4">
-            <h2>Coming soon...</h2>
-        </div>
-    )
+function Technologies() {
+  return (
+    <div className="flex flex-col flex-wrap justify-center gap-4">
+      <h2>Coming soon...</h2>
+    </div>
+  );
 }
 
-export default Technologies
+export default Technologies;
