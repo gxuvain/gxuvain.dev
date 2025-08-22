@@ -11,7 +11,6 @@ export default antfu({
     quotes: "double",
   },
   ignores: [
-    "./components/ui/*",
     ".pnpm-store/*",
   ],
 }, {
