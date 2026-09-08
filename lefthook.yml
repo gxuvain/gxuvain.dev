@@ -1,0 +1,5 @@
+pre-commit:
+  jobs:
+    - name: Lint
+      run: pnpm run format {staged_files}
+      stage_fixed: true

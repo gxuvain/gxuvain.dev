@@ -1,0 +1,37 @@
+{
+  "name": "gxuvain-dev",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@12.3.4",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "postinstall": "nuxt prepare",
+    "prepare": "lefthook install",
+    "lint": "eslint",
+    "format": "eslint --fix"
+  },
+  "dependencies": {
+    "@iconify-json/cib": "^1.2.3",
+    "@iconify-json/hugeicons": "^1.2.34",
+    "@iconify-json/logos": "^1.2.14",
+    "@nuxt/content": "3.15.0",
+    "@nuxt/eslint": "1.16.0",
+    "@nuxt/icon": "2.5.1",
+    "@nuxtjs/color-mode": "^4.0.1",
+    "better-sqlite3": "^12.11.1",
+    "nuxt": "^4.4.8",
+    "nuxt-toc": "^3.0.0",
+    "vue": "^3.5.39",
+    "vue-router": "^5.1.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^9.1.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "eslint": "^10.5.0",
+    "eslint-plugin-format": "^2.0.1",
+    "lefthook": "^2.1.12",
+    "tailwindcss": "^4.3.3"
+  }
+}
