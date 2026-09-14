@@ -3,6 +3,7 @@
 html {
   color-scheme: dark;
   background: #0f0f0f;
+  --nav-menu-bg: #0f0f0f;
 }
 
 html.light {
@@ -12,12 +13,13 @@ html.light {
   --color-neutral-400: #525252;
   --color-neutral-500: #737373;
   --color-neutral-700: #d4d4d4;
+  --nav-menu-bg: #fafafa;
 }
 
 .site-nav :is(a, button) {
   color: var(--color-neutral-500);
   cursor: pointer;
-  transition: color 300ms ease-out;
+  transition: color 200ms ease-out;
 }
 
 .site-nav :is(a, button):hover {
@@ -56,7 +58,7 @@ html.light {
 .post-toc .toc-link {
   color: var(--color-neutral-500);
   text-decoration: none;
-  transition: color 300ms ease-out;
+  transition: color 200ms ease-out;
 }
 
 .post-toc .toc-link:hover,

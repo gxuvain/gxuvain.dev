@@ -1,5 +1,5 @@
-import antfu from "@antfu/eslint-config";
-import withNuxt from "./.nuxt/eslint.config.mjs";
+import antfu from "@antfu/eslint-config"
+import withNuxt from "./.nuxt/eslint.config.mjs"
 
 export default withNuxt(antfu({
   type: "app",
@@ -8,7 +8,7 @@ export default withNuxt(antfu({
   formatters: true,
   stylistic: {
     indent: 2,
-    semi: true,
+    semi: false,
     quotes: "double",
   },
 }, {
@@ -25,4 +25,4 @@ export default withNuxt(antfu({
       ignore: ["README.md"],
     }],
   },
-}));
+}))

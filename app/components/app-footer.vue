@@ -1,7 +1,8 @@
 <template>
   <footer class="mx-auto mt-20 w-full max-w-3xl border-t border-white/10 py-6 text-xs leading-5 text-neutral-500">
-    <p aria-label="Made with love by me." class="flex items-center gap-1">
-      Made with <Icon name="hugeicons:heart" size="12" class="text-pink-500" aria-hidden="true" /> by me.
+    <p class="flex items-center gap-1">
+      Made with
+      <Icon name="hugeicons:heart" size="12" class="text-pink-500" /> by me.
     </p>
     <p>
       This website is inspired by
