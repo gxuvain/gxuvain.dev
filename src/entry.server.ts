@@ -1,7 +1,9 @@
 import { Effect } from 'effect'
 import { Server } from 'foldkit/experimental'
 
+import { posts } from './blog/posts'
 import { init, view } from './main'
+import { postRouter } from './route'
 
 export const renderDocument: typeof Server.renderDocument = (
   application,
@@ -11,7 +13,12 @@ export const renderDocument: typeof Server.renderDocument = (
     head: '<meta name="theme-color" content="#faf9f6"><script src="/theme-init.js"></script>',
   })
 
-export const prerenderPaths: ReadonlyArray<string> = ['/', '/about']
+export const prerenderPaths: ReadonlyArray<string> = [
+  '/',
+  '/about',
+  '/blog',
+  ...posts.map(post => postRouter({ slug: post.slug })),
+]
 
 export const renderPage = (request: Request): Promise<Server.EntryResult> =>
   Effect.runPromise(

@@ -4,6 +4,8 @@ import { markdown } from '@foldkit/markdown/vite'
 import { foldkit } from '@foldkit/vite-plugin'
 import tailwindcss from '@tailwindcss/vite'
 
+import { PostFrontmatter } from './src/blog/frontmatter.ts'
+
 export default defineConfig({
   plugins: [
     tailwindcss(),
@@ -14,7 +16,7 @@ export default defineConfig({
         build: { prerender: true },
       },
     }),
-    markdown(),
+    markdown({ frontmatter: PostFrontmatter }),
   ],
   optimizeDeps: {
     entries: ['src/entry.ts'],

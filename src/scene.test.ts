@@ -8,7 +8,9 @@ import {
   label,
   role,
   scene,
+  selector,
   text,
+  within,
 } from 'foldkit/scene'
 import { modifyFields } from 'foldkit/struct'
 import { describe, test } from 'vitest'
@@ -36,6 +38,27 @@ describe('view', () => {
       given(initialModel),
       expect(role('heading', { name: 'gxuvain.dev' })).toExist(),
       expect(text("Hey! I'm Gauvain", { exact: false })).toExist(),
+      expect(
+        within(role('main'), role('link', { name: 'About me →' })),
+      ).toHaveAttr('href', '/about'),
+    )
+  })
+
+  test('keeps navigation in the header and lets home occupy the main region', () => {
+    scene(
+      { update, view },
+      given(initialModel),
+      expect(role('banner')).toExist(),
+      expect(
+        within(role('banner'), role('navigation', { name: 'Main navigation' })),
+      ).toExist(),
+      expect(within(role('banner'), label('Color scheme'))).toExist(),
+      expect(
+        within(role('main'), role('heading', { name: 'gxuvain.dev' })),
+      ).toExist(),
+      expect(
+        within(role('main'), role('navigation', { name: 'Main navigation' })),
+      ).not.toExist(),
     )
   })
 
@@ -83,6 +106,62 @@ describe('view', () => {
       expect(
         text('I spend most of my time building software', { exact: false }),
       ).toExist(),
+    )
+  })
+
+  test('lists the post cover, title, date, author, description, and read more link', () => {
+    scene(
+      { update, view },
+      given(modifyFields(initialModel, { route: () => AppRoute.Blog() })),
+      expect(role('heading', { name: 'Blog' })).toExist(),
+      expect(selector('img')).toHaveAttr('src', '/blog/hello-world/cover.svg'),
+      expect(role('heading', { name: 'Hello world' })).toExist(),
+      expect(selector('time')).toHaveText('September 8, 2026'),
+      expect(text('Gauvain Palanga', { exact: false })).toExist(),
+      expect(
+        text('A first note to make sure the Markdown-powered blog is ready.'),
+      ).toExist(),
+      expect(role('link', { name: 'Read more: Hello world' })).toHaveAttr(
+        'href',
+        '/blog/hello-world',
+      ),
+      expect(role('link', { name: 'Read more: Hello world' })).toHaveText(
+        'Read more →',
+      ),
+    )
+  })
+
+  test('renders a Markdown post with its image and byline', () => {
+    scene(
+      { update, view },
+      given(
+        modifyFields(initialModel, {
+          route: () => AppRoute.Post({ slug: 'hello-world' }),
+        }),
+      ),
+      expect(role('heading', { name: 'Hello world' })).toExist(),
+      expect(
+        role('img', {
+          name: 'Hello world in white text on a near-black background',
+        }),
+      ).toHaveAttr('src', '/blog/hello-world/cover.svg'),
+      expect(selector('time')).toHaveText('September 8, 2026'),
+      expect(text('Gauvain Palanga', { exact: false })).toExist(),
+      expect(role('heading', { name: 'Welcome' })).toExist(),
+      expect(text('This is the first post on the new site.')).toExist(),
+      expect(role('link', { name: '← Blog' })).toHaveAttr('href', '/blog'),
+    )
+  })
+
+  test('shows not found for an unknown blog post', () => {
+    scene(
+      { update, view },
+      given(
+        modifyFields(initialModel, {
+          route: () => AppRoute.Post({ slug: 'absent' }),
+        }),
+      ),
+      expect(role('heading', { name: 'Not found' })).toExist(),
     )
   })
 

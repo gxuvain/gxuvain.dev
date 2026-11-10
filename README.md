@@ -11,16 +11,15 @@ pnpm dev
 
 ## Markdown content
 
-`@foldkit/markdown` compiles imported `.md` files during the Vite build. See
-`src/content/home.md`, `src/content/about.md`, and their `Markdown.decodeDocument`
-/ `Markdown.viewBlocks` usage in `src/main.ts`. To add blog posts, put Markdown files in `src/content/blog/`,
-import them into the application, and add their routes to `src/route.ts` and
-`prerenderPaths` in `src/entry.server.ts`. The scaffold does not yet include
-blog routes or posts.
-
-The plugin rejects raw HTML and unsafe links. Frontmatter requires a Schema
-passed to `markdown({ frontmatter: schema })` in **both** `vite.config.ts` and
-`vitest.config.ts`; without it, use plain Markdown files.
+`@foldkit/markdown` compiles imported `.md` files during the Vite build. Home
+and About are authored in `src/content/`. Blog posts live in
+`src/content/blog/<slug>.md`; `src/blog/posts.ts` discovers them and the build
+prerenders `/blog/<slug>` automatically. See `src/content/blog/hello-world.md`
+for the required frontmatter: `title`, `description`, `author`, `date`
+(`YYYY-MM-DD`), `image`, `imageAlt`, `imageWidth`, and `imageHeight`. Put each
+cover in `public/blog/<slug>/cover.svg` (or png, webp, jpg), and use its
+root-relative path in `image`. Blog frontmatter is validated by the same
+Schema in Vite and Vitest. Markdown rejects raw HTML and unsafe links.
 
 ## Color scheme
 

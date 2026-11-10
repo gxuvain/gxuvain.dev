@@ -10,6 +10,8 @@ import { Url, toString as urlToString } from 'foldkit/url'
 import { BrowserKeyValueStore } from '@effect/platform-browser'
 import * as Markdown from '@foldkit/markdown'
 
+import { findPostBySlug } from './blog/posts'
+import * as Blog from './blog/view'
 import {
   DARK_COLOR_SCHEME_QUERY,
   ResolvedTheme,
@@ -19,7 +21,13 @@ import {
 } from './colorScheme'
 import aboutRaw from './content/about.md'
 import homeRaw from './content/home.md'
-import { AppRoute, aboutRouter, homeRouter, urlToAppRoute } from './route'
+import {
+  AppRoute,
+  aboutRouter,
+  blogRouter,
+  homeRouter,
+  urlToAppRoute,
+} from './route'
 
 const about = Markdown.decodeDocument(aboutRaw)
 const home = Markdown.decodeDocument(homeRaw)
@@ -197,6 +205,12 @@ const routeTitle = (route: AppRoute): string =>
   AppRoute.match(route, {
     Home: () => 'gxuvain.dev',
     About: () => 'About | gxuvain.dev',
+    Blog: () => 'Blog | gxuvain.dev',
+    Post: ({ slug }) =>
+      Option.match(findPostBySlug(slug), {
+        onNone: () => 'Not Found | gxuvain.dev',
+        onSome: post => `${post.frontmatter.title} | gxuvain.dev`,
+      }),
     NotFound: () => 'Not Found | gxuvain.dev',
   })
 
@@ -206,6 +220,16 @@ const navigationView = (h: HtmlBuilder<Message>): Html =>
     [
       h.a([h.Href(homeRouter()), h.Class('underline')], ['Home']),
       h.a([h.Href(aboutRouter()), h.Class('underline')], ['About']),
+      h.a([h.Href(blogRouter()), h.Class('underline')], ['Blog']),
+    ],
+  )
+
+const notFoundView = (path: string, h: HtmlBuilder<Message>): Html =>
+  h.section(
+    [h.Class('grid gap-4')],
+    [
+      h.h1([h.Id('page-title'), h.Class('text-4xl font-bold')], ['Not found']),
+      h.p([], [`No statically generated page exists for ${path}.`]),
     ],
   )
 
@@ -221,17 +245,13 @@ const pageView = (model: Model, h: HtmlBuilder<Message>): Html =>
           h.div([h.Class('space-y-6')], Markdown.viewBlocks(about)),
         ],
       ),
-    NotFound: ({ path }) =>
-      h.section(
-        [h.Class('grid gap-4')],
-        [
-          h.h1(
-            [h.Id('page-title'), h.Class('text-4xl font-bold')],
-            ['Not found'],
-          ),
-          h.p([], [`No statically generated page exists for ${path}.`]),
-        ],
-      ),
+    Blog: () => Blog.indexView(h),
+    Post: ({ slug }) =>
+      Option.match(findPostBySlug(slug), {
+        onNone: () => notFoundView(`/blog/${slug}`, h),
+        onSome: post => Blog.postView(post, h),
+      }),
+    NotFound: ({ path }) => notFoundView(path, h),
   })
 
 const themeSelectorView = (model: Model, h: HtmlBuilder<Message>): Html =>
@@ -331,11 +351,30 @@ const footerView = (h: HtmlBuilder<Message>): Html =>
 export const view = (model: Model, h: HtmlBuilder<Message>): Document => ({
   title: routeTitle(model.route),
   body: h.div(
-    [h.Class('mx-auto flex min-h-screen max-w-3xl flex-col px-8')],
+    [h.Class('site-shell mx-auto max-w-3xl px-8')],
     [
+      h.header(
+        [h.Class('site-header sticky top-0 z-10')],
+        [
+          h.div(
+            [
+              h.Class(
+                'flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-4',
+              ),
+            ],
+            [navigationView(h), themeSelectorView(model, h)],
+          ),
+        ],
+      ),
       h.main(
-        [h.Class('grid flex-1 content-center gap-10 py-8')],
-        [navigationView(h), themeSelectorView(model, h), pageView(model, h)],
+        [
+          h.Class(
+            model.route._tag === 'Home'
+              ? 'flex flex-1 flex-col justify-center py-8'
+              : 'flex-1 py-8',
+          ),
+        ],
+        [pageView(model, h)],
       ),
       footerView(h),
     ],
