@@ -1,4 +1,4 @@
-import { Effect, Option, Schema, Stream, pipe } from 'effect'
+import { Effect, Option, Schema, Stream } from 'effect'
 import { KeyValueStore } from 'effect/persistence'
 import { Command, Dom, Runtime, Subscription, type Update } from 'foldkit'
 import { type Document, type Html, type HtmlBuilder } from 'foldkit/html'
@@ -18,15 +18,16 @@ import {
   resolveTheme,
 } from './colorScheme'
 import aboutRaw from './content/about.md'
+import homeRaw from './content/home.md'
 import { AppRoute, aboutRouter, homeRouter, urlToAppRoute } from './route'
 
 const about = Markdown.decodeDocument(aboutRaw)
+const home = Markdown.decodeDocument(homeRaw)
 
 // MODEL
 
 export const Model = Schema.Struct({
   route: AppRoute,
-  count: Schema.Number,
   maybeThemePreference: Schema.Option(ThemePreference),
   systemTheme: ResolvedTheme,
 })
@@ -35,7 +36,6 @@ export type Model = typeof Model.Type
 // MESSAGE
 
 export const Message = defineMessageUnion({
-  ClickedIncrement: {},
   ClickedLink: { request: UrlRequest },
   ChangedUrl: { url: Url },
   CompletedNavigateInternal: {},
@@ -57,7 +57,6 @@ export type Message = typeof Message.Type
 export const init: Runtime.RoutingApplicationInit<Model, Message> = url => ({
   model: {
     route: urlToAppRoute(url),
-    count: 0,
     maybeThemePreference: Option.none(),
     systemTheme: 'Light',
   },
@@ -141,9 +140,6 @@ type UpdateReturn = Update.Return<Model, Message>
 
 export const update = (model: Model, message: Message) =>
   Message.match<UpdateReturn>(message, {
-    ClickedIncrement: () => ({
-      model: modifyFields(model, { count: count => count + 1 }),
-    }),
     ClickedLink: ({ request }) =>
       UrlRequest.match<UpdateReturn>(request, {
         Internal: ({ url }) => ({
@@ -197,19 +193,12 @@ export const update = (model: Model, message: Message) =>
 
 // VIEW
 
-const APP_NAME = 'Foldkit App'
-
-const appendAppName = (page: string): string => `${page} | ${APP_NAME}`
-
 const routeTitle = (route: AppRoute): string =>
-  pipe(
-    AppRoute.match(route, {
-      Home: () => 'Home',
-      About: () => 'About',
-      NotFound: () => 'Not Found',
-    }),
-    appendAppName,
-  )
+  AppRoute.match(route, {
+    Home: () => 'gxuvain.dev',
+    About: () => 'About | gxuvain.dev',
+    NotFound: () => 'Not Found | gxuvain.dev',
+  })
 
 const navigationView = (h: HtmlBuilder<Message>): Html =>
   h.nav(
@@ -223,32 +212,13 @@ const navigationView = (h: HtmlBuilder<Message>): Html =>
 const pageView = (model: Model, h: HtmlBuilder<Message>): Html =>
   AppRoute.match(model.route, {
     Home: () =>
-      h.section(
-        [h.Class('grid gap-4')],
-        [
-          h.h1(
-            [h.Id('page-title'), h.Class('text-4xl font-bold')],
-            ['Statically generated home'],
-          ),
-          h.p(
-            [],
-            ['This route was rendered during the build and hydrated in place.'],
-          ),
-          h.button(
-            [
-              h.OnClick(Message.ClickedIncrement()),
-              h.Class('counter-button w-fit px-4 py-2'),
-            ],
-            [`Count: ${model.count}`],
-          ),
-        ],
-      ),
+      h.section([h.Class('home-prose grid gap-4')], Markdown.viewBlocks(home)),
     About: () =>
       h.section(
         [h.Class('grid gap-4')],
         [
           h.h1([h.Id('page-title'), h.Class('text-4xl font-bold')], ['About']),
-          Markdown.view(about),
+          h.div([h.Class('space-y-6')], Markdown.viewBlocks(about)),
         ],
       ),
     NotFound: ({ path }) =>
@@ -307,10 +277,67 @@ export const subscriptions = Subscription.make<Model, Message>()(entry => ({
   ),
 }))
 
+const profiles = [
+  { label: 'gh', name: 'GitHub', href: 'https://github.com/gxuvain' },
+  {
+    label: 'in',
+    name: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/gauvain-palanga',
+  },
+  { label: 'x', name: 'X', href: 'https://x.com/gxuvain' },
+]
+
+const footerView = (h: HtmlBuilder<Message>): Html =>
+  h.footer(
+    [h.Class('site-footer pb-8')],
+    [
+      h.hr([h.Class('mb-5')]),
+      h.div(
+        [
+          h.Class(
+            'flex flex-wrap items-center justify-between gap-x-6 gap-y-3',
+          ),
+        ],
+        [
+          h.nav(
+            [h.AriaLabel('Social links')],
+            [
+              h.ul(
+                [h.Class('flex gap-6')],
+                profiles.map(({ label, name, href }) =>
+                  h.keyed('li')(
+                    href,
+                    [],
+                    [
+                      h.a(
+                        [h.Href(href), h.AriaLabel(name), h.Rel('me')],
+                        [label],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          h.p(
+            [],
+            ['Built with ', h.a([h.Href('https://foldkit.dev')], ['Foldkit'])],
+          ),
+        ],
+      ),
+    ],
+  )
+
 export const view = (model: Model, h: HtmlBuilder<Message>): Document => ({
   title: routeTitle(model.route),
-  body: h.main(
-    [h.Class('mx-auto grid min-h-screen max-w-3xl content-center gap-10 p-8')],
-    [navigationView(h), themeSelectorView(model, h), pageView(model, h)],
+  body: h.div(
+    [h.Class('mx-auto flex min-h-screen max-w-3xl flex-col px-8')],
+    [
+      h.main(
+        [h.Class('grid flex-1 content-center gap-10 py-8')],
+        [navigationView(h), themeSelectorView(model, h), pageView(model, h)],
+      ),
+      footerView(h),
+    ],
   ),
 })

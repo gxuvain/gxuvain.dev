@@ -42,6 +42,12 @@ label {
   color: var(--page-muted);
 }
 
+.home-prose h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 2.5rem;
+}
+
 a {
   color: var(--page-muted);
   text-decoration: underline;
@@ -58,16 +64,14 @@ a:focus-visible {
   outline-offset: 3px;
 }
 
+.site-footer hr {
+  border-top: 1px solid var(--page-border);
+}
+
 select {
   border: 1px solid var(--page-border);
   border-radius: 0;
   background: var(--page-background);
   color: var(--page-foreground);
   padding: 0.3rem 0.5rem;
-}
-
-.counter-button {
-  border: 1px solid var(--page-border);
-  background: var(--page-foreground);
-  color: var(--page-background);
 }

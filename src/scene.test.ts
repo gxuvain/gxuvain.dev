@@ -3,7 +3,6 @@ import {
   Command,
   Subscription,
   change,
-  click,
   expect,
   given,
   label,
@@ -26,7 +25,6 @@ import { AppRoute } from './route'
 
 const initialModel = Model.make({
   route: AppRoute.Home(),
-  count: 0,
   maybeThemePreference: Option.none(),
   systemTheme: 'Light',
 })
@@ -36,8 +34,44 @@ describe('view', () => {
     scene(
       { update, view },
       given(initialModel),
-      expect(text('Statically generated home')).toExist(),
-      expect(role('button', { name: 'Count: 0' })).toExist(),
+      expect(role('heading', { name: 'gxuvain.dev' })).toExist(),
+      expect(text("Hey! I'm Gauvain", { exact: false })).toExist(),
+    )
+  })
+
+  test('shows a footer with the three social profiles on every page', () => {
+    scene(
+      { update, view },
+      given(initialModel),
+      expect(role('contentinfo')).toExist(),
+      expect(role('separator')).toExist(),
+      expect(role('link', { name: 'GitHub' })).toHaveText('gh'),
+      expect(role('link', { name: 'GitHub' })).toHaveAttr(
+        'href',
+        'https://github.com/gxuvain',
+      ),
+      expect(role('link', { name: 'LinkedIn' })).toHaveText('in'),
+      expect(role('link', { name: 'LinkedIn' })).toHaveAttr(
+        'href',
+        'https://www.linkedin.com/in/gauvain-palanga',
+      ),
+      expect(role('link', { name: 'X' })).toHaveText('x'),
+      expect(role('link', { name: 'X' })).toHaveAttr(
+        'href',
+        'https://x.com/gxuvain',
+      ),
+      expect(role('contentinfo')).toContainText('Built with Foldkit'),
+      expect(role('link', { name: 'Foldkit' })).toHaveAttr(
+        'href',
+        'https://foldkit.dev',
+      ),
+    )
+    scene(
+      { update, view },
+      given(modifyFields(initialModel, { route: () => AppRoute.About() })),
+      expect(role('contentinfo')).toExist(),
+      expect(role('link', { name: 'GitHub' })).toExist(),
+      expect(role('link', { name: 'Foldkit' })).toExist(),
     )
   })
 
@@ -46,8 +80,9 @@ describe('view', () => {
       { update, view },
       given(modifyFields(initialModel, { route: () => AppRoute.About() })),
       expect(role('heading', { name: 'About' })).toExist(),
-      expect(text('This page is authored in', { exact: false })).toExist(),
-      expect(text('Markdown')).toExist(),
+      expect(
+        text('I spend most of my time building software', { exact: false }),
+      ).toExist(),
     )
   })
 
@@ -119,15 +154,6 @@ describe('view', () => {
       Command.expectExact(ApplyTheme({ theme: 'Dark' })),
       Command.resolve(ApplyTheme, Message.CompletedApplyTheme()),
       expect(label('Color scheme')).toHaveValue('Dark'),
-    )
-  })
-
-  test('clicking the counter increments the count', () => {
-    scene(
-      { update, view },
-      given(initialModel),
-      click(role('button', { name: 'Count: 0' })),
-      expect(role('button', { name: 'Count: 1' })).toExist(),
     )
   })
 })

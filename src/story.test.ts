@@ -7,7 +7,6 @@ import { AppRoute } from './route'
 
 const initialModel = Model.make({
   route: AppRoute.Home(),
-  count: 0,
   maybeThemePreference: Option.none(),
   systemTheme: 'Light',
 })
