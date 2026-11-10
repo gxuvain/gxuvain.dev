@@ -10,7 +10,8 @@
     "esModuleInterop": true,
     "exactOptionalPropertyTypes": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": ["@foldkit/markdown/content", "node"]
   },
   "include": ["src/**/*"]
 }

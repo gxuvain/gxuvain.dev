@@ -9,6 +9,26 @@ pnpm install
 pnpm dev
 ```
 
+## Markdown content
+
+`@foldkit/markdown` compiles imported `.md` files during the Vite build. See
+`src/content/about.md` and its `Markdown.decodeDocument` / `Markdown.view` usage
+in `src/main.ts`. To add blog posts, put Markdown files in `src/content/blog/`,
+import them into the application, and add their routes to `src/route.ts` and
+`prerenderPaths` in `src/entry.server.ts`. The scaffold does not yet include
+blog routes or posts.
+
+The plugin rejects raw HTML and unsafe links. Frontmatter requires a Schema
+passed to `markdown({ frontmatter: schema })` in **both** `vite.config.ts` and
+`vitest.config.ts`; without it, use plain Markdown files.
+
+## Color scheme
+
+The selector offers System, Dark, and Light. System follows the operating
+system; an explicit choice is saved in localStorage. `public/theme-init.js`
+applies the saved choice before CSS loads, and CSS media queries keep the
+site readable in either scheme without JavaScript.
+
 ## Building and previewing
 
 ```bash

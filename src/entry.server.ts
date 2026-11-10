@@ -3,7 +3,13 @@ import { Server } from 'foldkit/experimental'
 
 import { init, view } from './main'
 
-export const renderDocument = Server.renderDocument
+export const renderDocument: typeof Server.renderDocument = (
+  application,
+  assets,
+) =>
+  Server.renderDocument(application, assets, {
+    head: '<meta name="theme-color" content="#faf9f6"><script src="/theme-init.js"></script>',
+  })
 
 export const prerenderPaths: ReadonlyArray<string> = ['/', '/about']
 

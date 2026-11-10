@@ -1,1 +1,73 @@
 @import 'tailwindcss';
+
+:root {
+  --page-background: #faf9f6;
+  --page-foreground: #222222;
+  --page-muted: #555555;
+  --page-border: #777777;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='Light']) {
+    --page-background: #161616;
+    --page-foreground: #f0f0ec;
+    --page-muted: #b8b8b4;
+    --page-border: #92928f;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='Dark'] {
+  --page-background: #161616;
+  --page-foreground: #f0f0ec;
+  --page-muted: #b8b8b4;
+  --page-border: #92928f;
+  color-scheme: dark;
+}
+
+html {
+  background: var(--page-background);
+  color: var(--page-foreground);
+  font-family: 'Space Mono', ui-monospace, monospace;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+p,
+label {
+  color: var(--page-muted);
+}
+
+a {
+  color: var(--page-muted);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--page-foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--page-foreground);
+  outline-offset: 3px;
+}
+
+select {
+  border: 1px solid var(--page-border);
+  border-radius: 0;
+  background: var(--page-background);
+  color: var(--page-foreground);
+  padding: 0.3rem 0.5rem;
+}
+
+.counter-button {
+  border: 1px solid var(--page-border);
+  background: var(--page-foreground);
+  color: var(--page-background);
+}
