@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+  <title id="title">Hello world</title>
+  <rect width="1200" height="630" fill="#165443"/>
+  <text x="96" y="318" fill="#f0f0ec" font-family="monospace" font-size="88" font-weight="bold">Hello world</text>
+  <text x="100" y="380" fill="#b8b8b4" font-family="monospace" font-size="28">gxuvain.dev</text>
+</svg>

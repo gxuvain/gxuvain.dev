@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+:root {
+  --page-background: #faf9f6;
+  --page-foreground: #222222;
+  --page-muted: #555555;
+  --page-border: #777777;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="Light"]) {
+    --page-background: #161616;
+    --page-foreground: #f0f0ec;
+    --page-muted: #b8b8b4;
+    --page-border: #92928f;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="Dark"] {
+  --page-background: #161616;
+  --page-foreground: #f0f0ec;
+  --page-muted: #b8b8b4;
+  --page-border: #92928f;
+  color-scheme: dark;
+}
+
+html {
+  background: var(--page-background);
+  color: var(--page-foreground);
+  font-family: "Space Mono", ui-monospace, monospace;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+.site-shell {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  flex-direction: column;
+}
+
+.site-header {
+  background: var(--page-background);
+}
+
+p,
+label {
+  color: var(--page-muted);
+}
+
+.home-prose h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 2.5rem;
+}
+
+.blog-cover {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.post-prose h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.post-prose h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.post-prose ul,
+.post-prose ol {
+  padding-inline-start: 1.5rem;
+}
+
+.post-prose ul {
+  list-style: disc;
+}
+
+.post-prose ol {
+  list-style: decimal;
+}
+
+.post-prose pre {
+  overflow-x: auto;
+}
+
+a {
+  color: var(--page-muted);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--page-foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--page-foreground);
+  outline-offset: 3px;
+}
+
+.site-footer hr {
+  border-top: 1px solid var(--page-border);
+}
+
+select {
+  border: 1px solid var(--page-border);
+  border-radius: 0;
+  background: var(--page-background);
+  color: var(--page-foreground);
+  padding: 0.3rem 0.5rem;
+}

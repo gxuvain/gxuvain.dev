@@ -1,26 +1,31 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
-.wrangler
-dist
+# Dependencies
+node_modules/
 
-# Node dependencies
-node_modules
+# Build outputs
+.build/
+dist/
+build/
+.alchemy/
 
-# Logs
-logs
-*.log
-
-# Misc
-.DS_Store
-.fleet
-.idea
-.pi
-
-# Local env files
+# Environment variables
 .env
 .env.*
-!.env.example
+.env.local
+.env.*.local
+
+# IDE
+.pi/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# Claude Code worktrees
+.claude/worktrees/
