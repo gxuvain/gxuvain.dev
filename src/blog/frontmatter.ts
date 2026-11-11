@@ -1,4 +1,4 @@
-import { Array, Option, Schema, String } from 'effect'
+import { Array, Option, Schema, String } from "effect"
 
 const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/
 const MONTH_LENGTHS: ReadonlyArray<number> = [
@@ -11,7 +11,7 @@ const isLeapYear = (year: number): boolean =>
 const isCalendarDate = (value: string): boolean =>
   Option.match(String.match(ISO_DATE_PATTERN)(value), {
     onNone: () => false,
-    onSome: ([, year = '', month = '', day = '']) => {
+    onSome: ([, year = "", month = "", day = ""]) => {
       const monthNumber = Number(month)
       const dayNumber = Number(day)
       const monthLength = Option.getOrElse(
@@ -34,7 +34,7 @@ export const PostFrontmatter = Schema.Struct({
   author: Schema.String.check(Schema.isNonEmpty()),
   date: Schema.String.check(
     Schema.makeFilter(value =>
-      isCalendarDate(value) ? undefined : 'expected a valid YYYY-MM-DD date',
+      isCalendarDate(value) ? undefined : "expected a valid YYYY-MM-DD date",
     ),
   ),
   image: Schema.String.check(

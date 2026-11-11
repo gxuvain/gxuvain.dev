@@ -13,5 +13,5 @@
     "noEmit": true,
     "types": ["@foldkit/markdown/content", "node"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "alchemy.run.ts", "stacks/**/*.ts"]
 }

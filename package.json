@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --outDir dist/client",
+    "deploy:plan": "alchemy plan",
+    "deploy": "alchemy deploy",
     "typecheck": "tsc --noEmit",
     "format": "oxfmt",
     "test": "vitest run",
@@ -19,6 +21,9 @@
     "foldkit": "0.170.0"
   },
   "devDependencies": {
+    "@alchemy.run/cloudflare": "2.0.0-beta.85",
+    "@alchemy.run/github": "2.0.0-beta.85",
+    "@effect/platform-node": "4.1.2",
     "@effect/tsgo": "0.50.0",
     "@foldkit/devtools": "0.170.0",
     "@foldkit/devtools-mcp": "0.26.0",
@@ -26,6 +31,7 @@
     "@foldkit/vite-plugin": "0.29.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "26.4.0",
+    "alchemy": "2.0.0-beta.85",
     "happy-dom": "^20.14.5",
     "oxfmt": "^0.66.0",
     "oxlint": "1.85.0",

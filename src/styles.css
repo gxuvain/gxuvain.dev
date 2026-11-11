@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 :root {
   --page-background: #faf9f6;
@@ -9,7 +9,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='Light']) {
+  :root:not([data-theme="Light"]) {
     --page-background: #161616;
     --page-foreground: #f0f0ec;
     --page-muted: #b8b8b4;
@@ -18,7 +18,7 @@
   }
 }
 
-:root[data-theme='Dark'] {
+:root[data-theme="Dark"] {
   --page-background: #161616;
   --page-foreground: #f0f0ec;
   --page-muted: #b8b8b4;
@@ -29,7 +29,7 @@
 html {
   background: var(--page-background);
   color: var(--page-foreground);
-  font-family: 'Space Mono', ui-monospace, monospace;
+  font-family: "Space Mono", ui-monospace, monospace;
 }
 
 body {

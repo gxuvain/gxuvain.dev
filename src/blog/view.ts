@@ -1,11 +1,11 @@
-import { Array } from 'effect'
-import type { Html, HtmlBuilder } from 'foldkit/html'
+import { Array } from "effect"
+import type { Html, HtmlBuilder } from "foldkit/html"
 
-import * as Markdown from '@foldkit/markdown'
+import * as Markdown from "@foldkit/markdown"
 
-import type { Message } from '../main'
-import { blogRouter, postRouter } from '../route'
-import { type Post, formatPostDate, posts } from './posts'
+import type { Message } from "../main"
+import { blogRouter, postRouter } from "../route"
+import { type Post, formatPostDate, posts } from "./posts"
 
 const bylineView = (post: Post, h: HtmlBuilder<Message>): Html =>
   h.p(
@@ -30,8 +30,8 @@ const coverView = (
     h.Alt(alt),
     h.Width(post.frontmatter.imageWidth),
     h.Height(post.frontmatter.imageHeight),
-    ...(isLazy ? [h.Loading('lazy')] : []),
-    h.Class('blog-cover'),
+    ...(isLazy ? [h.Loading("lazy")] : []),
+    h.Class("blog-cover"),
   ])
 
 const postEntryView = (
@@ -39,19 +39,19 @@ const postEntryView = (
   index: number,
   h: HtmlBuilder<Message>,
 ): Html =>
-  h.keyed('li')(
+  h.keyed("li")(
     post.slug,
     [],
     [
       h.article(
-        [h.Class('grid gap-3')],
+        [h.Class("grid gap-3")],
         [
           h.a(
             [h.Href(postRouter({ slug: post.slug }))],
             [
-              coverView(post, '', index !== 0, h),
+              coverView(post, "", index !== 0, h),
               h.h2(
-                [h.Class('mt-4 text-2xl font-bold')],
+                [h.Class("mt-4 text-2xl font-bold")],
                 [post.frontmatter.title],
               ),
             ],
@@ -63,7 +63,7 @@ const postEntryView = (
               h.Href(postRouter({ slug: post.slug })),
               h.AriaLabel(`Read more: ${post.frontmatter.title}`),
             ],
-            ['Read more →'],
+            ["Read more →"],
           ),
         ],
       ),
@@ -72,13 +72,13 @@ const postEntryView = (
 
 export const indexView = (h: HtmlBuilder<Message>): Html =>
   h.section(
-    [h.Class('grid gap-8')],
+    [h.Class("grid gap-8")],
     [
-      h.h1([h.Class('text-4xl font-bold')], ['Blog']),
+      h.h1([h.Class("text-4xl font-bold")], ["Blog"]),
       Array.isReadonlyArrayEmpty(posts)
-        ? h.p([], ['No posts yet.'])
+        ? h.p([], ["No posts yet."])
         : h.ul(
-            [h.Class('grid gap-12')],
+            [h.Class("grid gap-12")],
             posts.map((post, index) => postEntryView(post, index, h)),
           ),
     ],
@@ -86,20 +86,20 @@ export const indexView = (h: HtmlBuilder<Message>): Html =>
 
 export const postView = (post: Post, h: HtmlBuilder<Message>): Html =>
   h.article(
-    [h.Class('grid gap-6')],
+    [h.Class("grid gap-6")],
     [
-      h.a([h.Href(blogRouter())], ['← Blog']),
+      h.a([h.Href(blogRouter())], ["← Blog"]),
       coverView(post, post.frontmatter.imageAlt, false, h),
       h.header(
-        [h.Class('grid gap-3')],
+        [h.Class("grid gap-3")],
         [
-          h.h1([h.Class('text-4xl font-bold')], [post.frontmatter.title]),
+          h.h1([h.Class("text-4xl font-bold")], [post.frontmatter.title]),
           bylineView(post, h),
           h.p([], [post.frontmatter.description]),
         ],
       ),
       h.div(
-        [h.Class('post-prose space-y-6')],
+        [h.Class("post-prose space-y-6")],
         Markdown.viewBlocks(post.document),
       ),
     ],

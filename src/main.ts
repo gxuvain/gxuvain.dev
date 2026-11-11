@@ -1,33 +1,33 @@
-import { Effect, Option, Schema, Stream } from 'effect'
-import { KeyValueStore } from 'effect/persistence'
-import { Command, Dom, Runtime, Subscription, type Update } from 'foldkit'
-import { type Document, type Html, type HtmlBuilder } from 'foldkit/html'
-import { defineMessageUnion } from 'foldkit/message'
-import { UrlRequest, load, pushUrl } from 'foldkit/navigation'
-import { modifyFields } from 'foldkit/struct'
-import { Url, toString as urlToString } from 'foldkit/url'
+import { Effect, Option, Schema, Stream } from "effect"
+import { KeyValueStore } from "effect/persistence"
+import { Command, Dom, Runtime, Subscription, type Update } from "foldkit"
+import { type Document, type Html, type HtmlBuilder } from "foldkit/html"
+import { defineMessageUnion } from "foldkit/message"
+import { UrlRequest, load, pushUrl } from "foldkit/navigation"
+import { modifyFields } from "foldkit/struct"
+import { Url, toString as urlToString } from "foldkit/url"
 
-import { BrowserKeyValueStore } from '@effect/platform-browser'
-import * as Markdown from '@foldkit/markdown'
+import { BrowserKeyValueStore } from "@effect/platform-browser"
+import * as Markdown from "@foldkit/markdown"
 
-import { findPostBySlug } from './blog/posts'
-import * as Blog from './blog/view'
+import { findPostBySlug } from "./blog/posts"
+import * as Blog from "./blog/view"
 import {
   DARK_COLOR_SCHEME_QUERY,
   ResolvedTheme,
   THEME_STORAGE_KEY,
   ThemePreference,
   resolveTheme,
-} from './colorScheme'
-import aboutRaw from './content/about.md'
-import homeRaw from './content/home.md'
+} from "./colorScheme"
+import aboutRaw from "./content/about.md"
+import homeRaw from "./content/home.md"
 import {
   AppRoute,
   aboutRouter,
   blogRouter,
   homeRouter,
   urlToAppRoute,
-} from './route'
+} from "./route"
 
 const about = Markdown.decodeDocument(aboutRaw)
 const home = Markdown.decodeDocument(homeRaw)
@@ -66,28 +66,28 @@ export const init: Runtime.RoutingApplicationInit<Model, Message> = url => ({
   model: {
     route: urlToAppRoute(url),
     maybeThemePreference: Option.none(),
-    systemTheme: 'Light',
+    systemTheme: "Light",
   },
   commands: [LoadBrowserTheme()],
 })
 
 // COMMAND
 
-const NavigateInternal = Command.define('NavigateInternal', {
+const NavigateInternal = Command.define("NavigateInternal", {
   args: { url: Schema.String },
   messages: [Message.CompletedNavigateInternal],
   execute: ({ url }) =>
     pushUrl(url).pipe(Effect.as(Message.CompletedNavigateInternal())),
 })
 
-const LoadExternal = Command.define('LoadExternal', {
+const LoadExternal = Command.define("LoadExternal", {
   args: { href: Schema.String },
   messages: [Message.CompletedLoadExternal],
   execute: ({ href }) =>
     load(href).pipe(Effect.as(Message.CompletedLoadExternal())),
 })
 
-const LoadBrowserTheme = Command.define('LoadBrowserTheme', {
+const LoadBrowserTheme = Command.define("LoadBrowserTheme", {
   messages: [Message.CompletedLoadBrowserTheme],
   execute: Effect.gen(function* () {
     const maybePreference = yield* Effect.gen(function* () {
@@ -99,34 +99,34 @@ const LoadBrowserTheme = Command.define('LoadBrowserTheme', {
       Effect.provide(BrowserKeyValueStore.layerLocalStorage),
     )
     const systemTheme: ResolvedTheme = yield* Effect.sync(() =>
-      window.matchMedia(DARK_COLOR_SCHEME_QUERY).matches ? 'Dark' : 'Light',
+      window.matchMedia(DARK_COLOR_SCHEME_QUERY).matches ? "Dark" : "Light",
     )
 
     return Message.CompletedLoadBrowserTheme({
-      preference: Option.getOrElse(maybePreference, () => 'System'),
+      preference: Option.getOrElse(maybePreference, () => "System"),
       systemTheme,
     })
   }),
 })
 
-export const ApplyTheme = Command.define('ApplyTheme', {
+export const ApplyTheme = Command.define("ApplyTheme", {
   args: { theme: ResolvedTheme },
   messages: [Message.CompletedApplyTheme],
   execute: ({ theme }) =>
     Effect.sync(() => {
       document.documentElement.dataset.theme = theme
-      const themeColor = document.querySelector('meta[name="theme-color"]')
+      const themeColor = document.querySelector("meta[name=theme-color]")
       if (themeColor !== null) {
         themeColor.setAttribute(
-          'content',
-          theme === 'Dark' ? '#161616' : '#faf9f6',
+          "content",
+          theme === "Dark" ? "#161616" : "#faf9f6",
         )
       }
       return Message.CompletedApplyTheme()
     }),
 })
 
-export const SaveThemePreference = Command.define('SaveThemePreference', {
+export const SaveThemePreference = Command.define("SaveThemePreference", {
   args: { preference: ThemePreference },
   messages: [Message.CompletedSaveThemePreference],
   execute: ({ preference }) =>
@@ -187,7 +187,7 @@ export const update = (model: Model, message: Message) =>
       commands: [
         ApplyTheme({
           theme: resolveTheme(
-            Option.getOrElse(model.maybeThemePreference, () => 'System'),
+            Option.getOrElse(model.maybeThemePreference, () => "System"),
             theme,
           ),
         }),
@@ -203,32 +203,32 @@ export const update = (model: Model, message: Message) =>
 
 const routeTitle = (route: AppRoute): string =>
   AppRoute.match(route, {
-    Home: () => 'gxuvain.dev',
-    About: () => 'About | gxuvain.dev',
-    Blog: () => 'Blog | gxuvain.dev',
+    Home: () => "gxuvain.dev",
+    About: () => "About | gxuvain.dev",
+    Blog: () => "Blog | gxuvain.dev",
     Post: ({ slug }) =>
       Option.match(findPostBySlug(slug), {
-        onNone: () => 'Not Found | gxuvain.dev',
+        onNone: () => "Not Found | gxuvain.dev",
         onSome: post => `${post.frontmatter.title} | gxuvain.dev`,
       }),
-    NotFound: () => 'Not Found | gxuvain.dev',
+    NotFound: () => "Not Found | gxuvain.dev",
   })
 
 const navigationView = (h: HtmlBuilder<Message>): Html =>
   h.nav(
-    [h.AriaLabel('Main navigation'), h.Class('flex gap-4')],
+    [h.AriaLabel("Main navigation"), h.Class("flex gap-4")],
     [
-      h.a([h.Href(homeRouter()), h.Class('underline')], ['Home']),
-      h.a([h.Href(aboutRouter()), h.Class('underline')], ['About']),
-      h.a([h.Href(blogRouter()), h.Class('underline')], ['Blog']),
+      h.a([h.Href(homeRouter()), h.Class("underline")], ["Home"]),
+      h.a([h.Href(aboutRouter()), h.Class("underline")], ["About"]),
+      h.a([h.Href(blogRouter()), h.Class("underline")], ["Blog"]),
     ],
   )
 
 const notFoundView = (path: string, h: HtmlBuilder<Message>): Html =>
   h.section(
-    [h.Class('grid gap-4')],
+    [h.Class("grid gap-4")],
     [
-      h.h1([h.Id('page-title'), h.Class('text-4xl font-bold')], ['Not found']),
+      h.h1([h.Id("page-title"), h.Class("text-4xl font-bold")], ["Not found"]),
       h.p([], [`No statically generated page exists for ${path}.`]),
     ],
   )
@@ -236,13 +236,13 @@ const notFoundView = (path: string, h: HtmlBuilder<Message>): Html =>
 const pageView = (model: Model, h: HtmlBuilder<Message>): Html =>
   AppRoute.match(model.route, {
     Home: () =>
-      h.section([h.Class('home-prose grid gap-4')], Markdown.viewBlocks(home)),
+      h.section([h.Class("home-prose grid gap-4")], Markdown.viewBlocks(home)),
     About: () =>
       h.section(
-        [h.Class('grid gap-4')],
+        [h.Class("grid gap-4")],
         [
-          h.h1([h.Id('page-title'), h.Class('text-4xl font-bold')], ['About']),
-          h.div([h.Class('space-y-6')], Markdown.viewBlocks(about)),
+          h.h1([h.Id("page-title"), h.Class("text-4xl font-bold")], ["About"]),
+          h.div([h.Class("space-y-6")], Markdown.viewBlocks(about)),
         ],
       ),
     Blog: () => Blog.indexView(h),
@@ -256,19 +256,19 @@ const pageView = (model: Model, h: HtmlBuilder<Message>): Html =>
 
 const themeSelectorView = (model: Model, h: HtmlBuilder<Message>): Html =>
   h.div(
-    [h.Class('flex items-center gap-2')],
+    [h.Class("flex items-center gap-2")],
     [
-      h.label([h.For('color-scheme')], ['Color scheme']),
+      h.label([h.For("color-scheme")], ["Color scheme"]),
       h.select(
         [
-          h.Id('color-scheme'),
-          h.Value(Option.getOrElse(model.maybeThemePreference, () => 'System')),
+          h.Id("color-scheme"),
+          h.Value(Option.getOrElse(model.maybeThemePreference, () => "System")),
           h.OnChange(value => Message.SelectedThemePreference({ value })),
         ],
         [
-          h.option([h.Value('System')], ['System']),
-          h.option([h.Value('Dark')], ['Dark']),
-          h.option([h.Value('Light')], ['Light']),
+          h.option([h.Value("System")], ["System"]),
+          h.option([h.Value("Dark")], ["Dark"]),
+          h.option([h.Value("Light")], ["Light"]),
         ],
       ),
     ],
@@ -281,7 +281,7 @@ export const subscriptions = Subscription.make<Model, Message>()(entry => ({
       modelToDependencies: model => ({
         isSystemPreference: Option.exists(
           model.maybeThemePreference,
-          preference => preference === 'System',
+          preference => preference === "System",
         ),
       }),
       dependenciesToStream: ({ isSystemPreference }) =>
@@ -289,7 +289,7 @@ export const subscriptions = Subscription.make<Model, Message>()(entry => ({
           Dom.streamFromMediaQuery({
             query: DARK_COLOR_SCHEME_QUERY,
             mapMatches: isDark =>
-              Message.ChangedSystemTheme({ theme: isDark ? 'Dark' : 'Light' }),
+              Message.ChangedSystemTheme({ theme: isDark ? "Dark" : "Light" }),
           }),
           Effect.sync(() => isSystemPreference),
         ),
@@ -298,39 +298,39 @@ export const subscriptions = Subscription.make<Model, Message>()(entry => ({
 }))
 
 const profiles = [
-  { label: 'gh', name: 'GitHub', href: 'https://github.com/gxuvain' },
+  { label: "gh", name: "GitHub", href: "https://github.com/gxuvain" },
   {
-    label: 'in',
-    name: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/gauvain-palanga',
+    label: "in",
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/in/gauvain-palanga",
   },
-  { label: 'x', name: 'X', href: 'https://x.com/gxuvain' },
+  { label: "x", name: "X", href: "https://x.com/gxuvain" },
 ]
 
 const footerView = (h: HtmlBuilder<Message>): Html =>
   h.footer(
-    [h.Class('site-footer pb-8')],
+    [h.Class("site-footer pb-8")],
     [
-      h.hr([h.Class('mb-5')]),
+      h.hr([h.Class("mb-5")]),
       h.div(
         [
           h.Class(
-            'flex flex-wrap items-center justify-between gap-x-6 gap-y-3',
+            "flex flex-wrap items-center justify-between gap-x-6 gap-y-3",
           ),
         ],
         [
           h.nav(
-            [h.AriaLabel('Social links')],
+            [h.AriaLabel("Social links")],
             [
               h.ul(
-                [h.Class('flex gap-6')],
+                [h.Class("flex gap-6")],
                 profiles.map(({ label, name, href }) =>
-                  h.keyed('li')(
+                  h.keyed("li")(
                     href,
                     [],
                     [
                       h.a(
-                        [h.Href(href), h.AriaLabel(name), h.Rel('me')],
+                        [h.Href(href), h.AriaLabel(name), h.Rel("me")],
                         [label],
                       ),
                     ],
@@ -341,7 +341,7 @@ const footerView = (h: HtmlBuilder<Message>): Html =>
           ),
           h.p(
             [],
-            ['Built with ', h.a([h.Href('https://foldkit.dev')], ['Foldkit'])],
+            ["Built with ", h.a([h.Href("https://foldkit.dev")], ["Foldkit"])],
           ),
         ],
       ),
@@ -351,15 +351,15 @@ const footerView = (h: HtmlBuilder<Message>): Html =>
 export const view = (model: Model, h: HtmlBuilder<Message>): Document => ({
   title: routeTitle(model.route),
   body: h.div(
-    [h.Class('site-shell mx-auto max-w-3xl px-8')],
+    [h.Class("site-shell mx-auto max-w-3xl px-8")],
     [
       h.header(
-        [h.Class('site-header sticky top-0 z-10')],
+        [h.Class("site-header sticky top-0 z-10")],
         [
           h.div(
             [
               h.Class(
-                'flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-4',
+                "flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-4",
               ),
             ],
             [navigationView(h), themeSelectorView(model, h)],
@@ -369,9 +369,9 @@ export const view = (model: Model, h: HtmlBuilder<Message>): Document => ({
       h.main(
         [
           h.Class(
-            model.route._tag === 'Home'
-              ? 'flex flex-1 flex-col justify-center py-8'
-              : 'flex-1 py-8',
+            model.route._tag === "Home"
+              ? "flex flex-1 flex-col justify-center py-8"
+              : "flex-1 py-8",
           ),
         ],
         [pageView(model, h)],

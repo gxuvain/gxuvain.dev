@@ -7,19 +7,19 @@ import {
   Schema,
   String,
   pipe,
-} from 'effect'
+} from "effect"
 
-import * as Markdown from '@foldkit/markdown'
+import * as Markdown from "@foldkit/markdown"
 
-import { PostFrontmatter } from './frontmatter'
+import { PostFrontmatter } from "./frontmatter"
 
-const documentsByPath = import.meta.glob<unknown>('../content/blog/*.md', {
+const documentsByPath = import.meta.glob<unknown>("../content/blog/*.md", {
   eager: true,
-  import: 'default',
+  import: "default",
 })
-const frontmatterByPath = import.meta.glob<unknown>('../content/blog/*.md', {
+const frontmatterByPath = import.meta.glob<unknown>("../content/blog/*.md", {
   eager: true,
-  import: 'frontmatter',
+  import: "frontmatter",
 })
 
 export type Post = Readonly<{
@@ -31,8 +31,8 @@ export type Post = Readonly<{
 const pathToSlug = (path: string): string =>
   pipe(
     path,
-    String.replace('../content/blog/', ''),
-    String.replace(/\.md$/, ''),
+    String.replace("../content/blog/", ""),
+    String.replace(/\.md$/, ""),
   )
 
 const toPost = (path: string, rawDocument: unknown): Post => {
@@ -77,5 +77,5 @@ export const formatPostDate = (date: string): string =>
   Option.match(DateTime.make(date), {
     onNone: () => date,
     onSome: value =>
-      DateTime.formatUtc(value, { dateStyle: 'long', locale: 'en-US' }),
+      DateTime.formatUtc(value, { dateStyle: "long", locale: "en-US" }),
   })
