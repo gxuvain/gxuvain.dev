@@ -19,6 +19,11 @@ import { describe, expect as expectFile, test } from "vitest"
 
 import { Menu } from "@foldkit/ui"
 
+import samplePostDocument, {
+  frontmatter as samplePostFrontmatter,
+} from "./blog/fixtures/sample-post.md"
+import { makePost } from "./blog/posts"
+import * as Blog from "./blog/view"
 import { type ThemePreference } from "./colorScheme"
 import {
   ApplyTheme,
@@ -36,6 +41,12 @@ const initialModel = Model.make({
   systemTheme: "Light",
   themeMenu: Menu.init({ id: "theme-menu" }),
 })
+
+const samplePost = makePost(
+  "sample-post",
+  samplePostFrontmatter,
+  samplePostDocument,
+)
 
 const button = (preference: ThemePreference) =>
   role("button", { name: `Color scheme: ${preference}` })
@@ -160,23 +171,30 @@ describe("view", () => {
     )
   })
 
-  test("lists the post cover, title, date, author, description, and read more link", () => {
+  test("shows an empty state while no post is published", () => {
     scene(
       { update, view },
       given(modifyFields(initialModel, { route: () => AppRoute.Blog() })),
       expect(role("heading", { name: "Blog" })).toExist(),
-      expect(selector("img")).toHaveAttr("src", "/blog/hello-world/cover.svg"),
-      expect(role("heading", { name: "Hello world" })).toExist(),
+      expect(text("No posts yet.")).toExist(),
+    )
+  })
+
+  test("lists the post cover, title, date, author, description, and read more link", () => {
+    scene(
+      { update, view: (_model, h) => Blog.indexView([samplePost], h) },
+      given(initialModel),
+      expect(role("heading", { name: "Blog" })).toExist(),
+      expect(selector("img")).toHaveAttr("src", "/blog/sample-post/cover.svg"),
+      expect(role("heading", { name: "Sample post" })).toExist(),
       expect(selector("time")).toHaveText("September 8, 2026"),
       expect(text("Gauvain Palanga", { exact: false })).toExist(),
-      expect(
-        text("A first note to make sure the Markdown-powered blog is ready."),
-      ).toExist(),
-      expect(role("link", { name: "Read more: Hello world" })).toHaveAttr(
+      expect(text("A test-only post that exercises the blog views.")).toExist(),
+      expect(role("link", { name: "Read more: Sample post" })).toHaveAttr(
         "href",
-        "/blog/hello-world",
+        "/blog/sample-post",
       ),
-      expect(role("link", { name: "Read more: Hello world" })).toHaveText(
+      expect(role("link", { name: "Read more: Sample post" })).toHaveText(
         "Read more →",
       ),
     )
@@ -184,22 +202,19 @@ describe("view", () => {
 
   test("renders a Markdown post with its image and byline", () => {
     scene(
-      { update, view },
-      given(
-        modifyFields(initialModel, {
-          route: () => AppRoute.Post({ slug: "hello-world" }),
-        }),
+      { update, view: (_model, h) => Blog.postView(samplePost, h) },
+      given(initialModel),
+      expect(role("heading", { name: "Sample post" })).toExist(),
+      expect(role("img", { name: "Sample post cover" })).toHaveAttr(
+        "src",
+        "/blog/sample-post/cover.svg",
       ),
-      expect(role("heading", { name: "Hello world" })).toExist(),
-      expect(
-        role("img", {
-          name: "Hello world in white text on a near-black background",
-        }),
-      ).toHaveAttr("src", "/blog/hello-world/cover.svg"),
       expect(selector("time")).toHaveText("September 8, 2026"),
       expect(text("Gauvain Palanga", { exact: false })).toExist(),
       expect(role("heading", { name: "Welcome" })).toExist(),
-      expect(text("This is the first post on the new site.")).toExist(),
+      expect(
+        text("This post only exists for tests and is never published."),
+      ).toExist(),
       expect(role("link", { name: "← Blog" })).toHaveAttr("href", "/blog"),
     )
   })
