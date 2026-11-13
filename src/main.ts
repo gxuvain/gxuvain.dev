@@ -1,7 +1,13 @@
-import { Effect, Option, Schema, Stream } from "effect"
+import { Effect, Match, Option, Schema, Stream } from "effect"
 import { KeyValueStore } from "effect/persistence"
-import { Command, Dom, Runtime, Subscription, type Update } from "foldkit"
-import { type Document, type Html, type HtmlBuilder } from "foldkit/html"
+import { Command, Dom, Runtime, Subscription, Update } from "foldkit"
+import {
+  type Document,
+  type Html,
+  type HtmlBuilder,
+  childAttributes,
+  inertHtml as ih,
+} from "foldkit/html"
 import { defineMessageUnion } from "foldkit/message"
 import { UrlRequest, load, pushUrl } from "foldkit/navigation"
 import { modifyFields } from "foldkit/struct"
@@ -9,11 +15,14 @@ import { Url, toString as urlToString } from "foldkit/url"
 
 import { BrowserKeyValueStore } from "@effect/platform-browser"
 import * as Markdown from "@foldkit/markdown"
+import { Menu } from "@foldkit/ui"
 
 import { findPostBySlug } from "./blog/posts"
 import * as Blog from "./blog/view"
 import {
   DARK_COLOR_SCHEME_QUERY,
+  DARK_THEME_COLOR,
+  LIGHT_THEME_COLOR,
   ResolvedTheme,
   THEME_STORAGE_KEY,
   ThemePreference,
@@ -21,6 +30,7 @@ import {
 } from "./colorScheme"
 import aboutRaw from "./content/about.md"
 import homeRaw from "./content/home.md"
+import * as Icon from "./icon"
 import {
   AppRoute,
   aboutRouter,
@@ -38,6 +48,7 @@ export const Model = Schema.Struct({
   route: AppRoute,
   maybeThemePreference: Schema.Option(ThemePreference),
   systemTheme: ResolvedTheme,
+  themeMenu: Menu.Model,
 })
 export type Model = typeof Model.Type
 
@@ -54,7 +65,7 @@ export const Message = defineMessageUnion({
   },
   CompletedApplyTheme: {},
   CompletedSaveThemePreference: {},
-  SelectedThemePreference: { value: Schema.String },
+  GotThemeMenuMessage: { message: Menu.Message },
   ChangedSystemTheme: { theme: ResolvedTheme },
 })
 
@@ -67,27 +78,28 @@ export const init: Runtime.RoutingApplicationInit<Model, Message> = url => ({
     route: urlToAppRoute(url),
     maybeThemePreference: Option.none(),
     systemTheme: "Light",
+    themeMenu: Menu.init({ id: "theme-menu" }),
   },
   commands: [LoadBrowserTheme()],
 })
 
 // COMMAND
 
-const NavigateInternal = Command.define("NavigateInternal", {
+export const NavigateInternal = Command.define("NavigateInternal", {
   args: { url: Schema.String },
   messages: [Message.CompletedNavigateInternal],
   execute: ({ url }) =>
     pushUrl(url).pipe(Effect.as(Message.CompletedNavigateInternal())),
 })
 
-const LoadExternal = Command.define("LoadExternal", {
+export const LoadExternal = Command.define("LoadExternal", {
   args: { href: Schema.String },
   messages: [Message.CompletedLoadExternal],
   execute: ({ href }) =>
     load(href).pipe(Effect.as(Message.CompletedLoadExternal())),
 })
 
-const LoadBrowserTheme = Command.define("LoadBrowserTheme", {
+export const LoadBrowserTheme = Command.define("LoadBrowserTheme", {
   messages: [Message.CompletedLoadBrowserTheme],
   execute: Effect.gen(function* () {
     const maybePreference = yield* Effect.gen(function* () {
@@ -119,7 +131,7 @@ export const ApplyTheme = Command.define("ApplyTheme", {
       if (themeColor !== null) {
         themeColor.setAttribute(
           "content",
-          theme === "Dark" ? "#161616" : "#faf9f6",
+          theme === "Dark" ? DARK_THEME_COLOR : LIGHT_THEME_COLOR,
         )
       }
       return Message.CompletedApplyTheme()
@@ -146,6 +158,56 @@ export const SaveThemePreference = Command.define("SaveThemePreference", {
 
 type UpdateReturn = Update.Return<Model, Message>
 
+const THEME_PREFERENCES: ReadonlyArray<ThemePreference> = [
+  "System",
+  "Dark",
+  "Light",
+]
+
+const ThemeMenu = Menu.create<ThemePreference>()
+
+const foldThemeMenuOutMessage = Menu.OutMessage.match<
+  Update.Step<Model, Message>,
+  Menu.OutMessage<ThemePreference>
+>({
+  Selected:
+    ({ value: preference }) =>
+    model => ({
+      model: modifyFields(model, {
+        maybeThemePreference: () => Option.some(preference),
+      }),
+      commands: [
+        ApplyTheme({ theme: resolveTheme(preference, model.systemTheme) }),
+        SaveThemePreference({ preference }),
+      ],
+    }),
+})
+
+const readThemeMenu = (model: Model): Option.Option<Menu.Model> =>
+  Option.some(model.themeMenu)
+
+const writeThemeMenu = (model: Model, nextThemeMenu: Menu.Model): Model =>
+  modifyFields(model, { themeMenu: () => nextThemeMenu })
+
+const toGotThemeMenuMessage = (message: Menu.Message): Message =>
+  Message.GotThemeMenuMessage({ message })
+
+const foldThemeMenu = Update.foldChild({
+  update: ThemeMenu.update,
+  read: readThemeMenu,
+  write: writeThemeMenu,
+  toParentMessage: toGotThemeMenuMessage,
+  foldOutMessage: foldThemeMenuOutMessage,
+})
+
+const foldThemeMenuClose = Update.foldChildStep({
+  update: ThemeMenu.close,
+  read: readThemeMenu,
+  write: writeThemeMenu,
+  toParentMessage: toGotThemeMenuMessage,
+  foldOutMessage: foldThemeMenuOutMessage,
+})
+
 export const update = (model: Model, message: Message) =>
   Message.match<UpdateReturn>(message, {
     ClickedLink: ({ request }) =>
@@ -159,9 +221,13 @@ export const update = (model: Model, message: Message) =>
           commands: [LoadExternal({ href })],
         }),
       }),
-    ChangedUrl: ({ url }) => ({
-      model: modifyFields(model, { route: () => urlToAppRoute(url) }),
-    }),
+    ChangedUrl: ({ url }) =>
+      Update.combine(model, [
+        current => ({
+          model: modifyFields(current, { route: () => urlToAppRoute(url) }),
+        }),
+        foldThemeMenuClose,
+      ]),
     CompletedLoadBrowserTheme: ({ preference, systemTheme }) => ({
       model: modifyFields(model, {
         maybeThemePreference: () => Option.some(preference),
@@ -169,19 +235,7 @@ export const update = (model: Model, message: Message) =>
       }),
       commands: [ApplyTheme({ theme: resolveTheme(preference, systemTheme) })],
     }),
-    SelectedThemePreference: ({ value }) =>
-      Option.match(Schema.decodeUnknownOption(ThemePreference)(value), {
-        onNone: () => ({ model }),
-        onSome: preference => ({
-          model: modifyFields(model, {
-            maybeThemePreference: () => Option.some(preference),
-          }),
-          commands: [
-            ApplyTheme({ theme: resolveTheme(preference, model.systemTheme) }),
-            SaveThemePreference({ preference }),
-          ],
-        }),
-      }),
+    GotThemeMenuMessage: ({ message }) => foldThemeMenu(model, message),
     ChangedSystemTheme: ({ theme }) => ({
       model: modifyFields(model, { systemTheme: () => theme }),
       commands: [
@@ -254,25 +308,75 @@ const pageView = (model: Model, h: HtmlBuilder<Message>): Html =>
     NotFound: ({ path }) => notFoundView(path, h),
   })
 
-const themeSelectorView = (model: Model, h: HtmlBuilder<Message>): Html =>
-  h.div(
-    [h.Class("flex items-center gap-2")],
-    [
-      h.label([h.For("color-scheme")], ["Color scheme"]),
-      h.select(
-        [
-          h.Id("color-scheme"),
-          h.Value(Option.getOrElse(model.maybeThemePreference, () => "System")),
-          h.OnChange(value => Message.SelectedThemePreference({ value })),
-        ],
-        [
-          h.option([h.Value("System")], ["System"]),
-          h.option([h.Value("Dark")], ["Dark"]),
-          h.option([h.Value("Light")], ["Light"]),
-        ],
-      ),
-    ],
+const themePreferenceIcon = (
+  preference: ThemePreference,
+  className: string,
+): Html =>
+  Match.value(preference).pipe(
+    Match.when("System", () => Icon.computer(className)),
+    Match.when("Dark", () => Icon.moon(className)),
+    Match.when("Light", () => Icon.sun(className)),
+    Match.exhaustive,
   )
+
+const THEME_MENU_ANCHOR: Menu.AnchorConfig = {
+  placement: "bottom-end",
+  gap: 8,
+  padding: 8,
+}
+
+const themeMenuView = (model: Model, h: HtmlBuilder<Message>): Html => {
+  const activePreference = Option.getOrElse(
+    model.maybeThemePreference,
+    (): ThemePreference => "System",
+  )
+
+  return h.submodel({
+    slotId: "theme-menu",
+    model: model.themeMenu,
+    view: ThemeMenu.view,
+    viewInputs: {
+      anchor: THEME_MENU_ANCHOR,
+      ariaLabel: `Color scheme: ${activePreference}`,
+      items: THEME_PREFERENCES,
+      itemToConfig: preference => {
+        const isSelected = preference === activePreference
+
+        return {
+          className:
+            "theme-menu-item w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm",
+          content: ih.div(
+            [ih.Class("flex w-full items-center gap-3")],
+            [
+              themePreferenceIcon(preference, "size-5 shrink-0"),
+              ih.span([ih.Class("flex-1")], [preference]),
+              Icon.check(
+                isSelected ? "size-4 shrink-0" : "invisible size-4 shrink-0",
+              ),
+              ...(isSelected
+                ? [ih.span([ih.Class("sr-only")], ["(selected)"])]
+                : []),
+            ],
+          ),
+        }
+      },
+      buttonContent: themePreferenceIcon(activePreference, "size-5"),
+      buttonAttributes: childAttributes([
+        ih.Class(
+          "inline-flex size-8 cursor-pointer items-center justify-center rounded-md transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2",
+        ),
+      ]),
+      itemsAttributes: childAttributes([
+        ih.Class(
+          "theme-menu-items z-[70] min-w-40 rounded-md border p-2 shadow-lg",
+        ),
+      ]),
+      backdropAttributes: childAttributes([ih.Class("fixed inset-0 z-[60]")]),
+      attributes: childAttributes([ih.Class("inline-flex")]),
+    },
+    toParentMessage: message => Message.GotThemeMenuMessage({ message }),
+  })
+}
 
 export const subscriptions = Subscription.make<Model, Message>()(entry => ({
   systemTheme: entry(
@@ -362,7 +466,7 @@ export const view = (model: Model, h: HtmlBuilder<Message>): Document => ({
                 "flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-4",
               ),
             ],
-            [navigationView(h), themeSelectorView(model, h)],
+            [navigationView(h), themeMenuView(model, h)],
           ),
         ],
       ),

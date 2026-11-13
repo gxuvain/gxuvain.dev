@@ -2,6 +2,7 @@ import { Effect } from "effect"
 import { Server } from "foldkit/experimental"
 
 import { posts } from "./blog/posts"
+import { LIGHT_THEME_COLOR } from "./colorScheme"
 import { init, view } from "./main"
 import { postRouter } from "./route"
 
@@ -10,7 +11,7 @@ export const renderDocument: typeof Server.renderDocument = (
   assets,
 ) =>
   Server.renderDocument(application, assets, {
-    head: `<meta name="theme-color" content="#faf9f6"><script src="/theme-init.js"></script>`,
+    head: `<meta name="theme-color" content="${LIGHT_THEME_COLOR}"><script src="/theme-init.js"></script>`,
   })
 
 export const prerenderPaths: ReadonlyArray<string> = [

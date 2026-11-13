@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs"
 import { runInNewContext } from "node:vm"
 import { describe, expect, test } from "vitest"
 
+import { DARK_THEME_COLOR, LIGHT_THEME_COLOR } from "./colorScheme"
+
 const themeInit = readFileSync("public/theme-init.js", "utf8")
 
 const runThemeInit = (
@@ -46,22 +48,22 @@ describe("prepaint color scheme", () => {
   test("uses the system scheme without a saved choice", () => {
     expect(runThemeInit(undefined, true)).toEqual({
       theme: "Dark",
-      color: "#161616",
+      color: DARK_THEME_COLOR,
     })
     expect(runThemeInit(undefined, false)).toEqual({
       theme: "Light",
-      color: "#faf9f6",
+      color: LIGHT_THEME_COLOR,
     })
   })
 
   test("saved light and dark choices override the system scheme", () => {
     expect(runThemeInit("Light", true)).toEqual({
       theme: "Light",
-      color: "#faf9f6",
+      color: LIGHT_THEME_COLOR,
     })
     expect(runThemeInit("Dark", false)).toEqual({
       theme: "Dark",
-      color: "#161616",
+      color: DARK_THEME_COLOR,
     })
   })
 
