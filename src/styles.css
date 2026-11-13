@@ -136,3 +136,30 @@ select {
 .theme-menu-item[data-active] {
   background: color-mix(in srgb, var(--page-foreground) 10%, transparent);
 }
+
+.home-logo img {
+  width: 5rem;
+  height: 5rem;
+}
+
+.home-logo-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="Light"]) .home-logo-light {
+    display: none;
+  }
+
+  :root:not([data-theme="Light"]) .home-logo-dark {
+    display: block;
+  }
+}
+
+:root[data-theme="Dark"] .home-logo-light {
+  display: none;
+}
+
+:root[data-theme="Dark"] .home-logo-dark {
+  display: block;
+}
