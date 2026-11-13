@@ -1,4 +1,10 @@
 @import "tailwindcss";
+@import "@fontsource-variable/bricolage-grotesque";
+
+@theme {
+  --font-sans:
+    "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+}
 
 :root {
   --page-background: #faf9f6;
@@ -29,7 +35,7 @@
 html {
   background: var(--page-background);
   color: var(--page-foreground);
-  font-family: "Space Mono", ui-monospace, monospace;
+  font-family: var(--font-sans);
 }
 
 body {
@@ -118,4 +124,15 @@ select {
   background: var(--page-background);
   color: var(--page-foreground);
   padding: 0.3rem 0.5rem;
+}
+
+.theme-menu-items {
+  border-color: var(--page-border);
+  background: var(--page-background);
+  color: var(--page-foreground);
+}
+
+.theme-menu-item:hover,
+.theme-menu-item[data-active] {
+  background: color-mix(in srgb, var(--page-foreground) 10%, transparent);
 }

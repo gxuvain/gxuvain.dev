@@ -1,11 +1,11 @@
 import { Option } from "effect"
 import {
   Command,
+  Mount,
   Subscription,
-  change,
+  click,
   expect,
   given,
-  label,
   role,
   scene,
   selector,
@@ -15,6 +15,9 @@ import {
 import { modifyFields } from "foldkit/struct"
 import { describe, test } from "vitest"
 
+import { Menu } from "@foldkit/ui"
+
+import { type ThemePreference } from "./colorScheme"
 import {
   ApplyTheme,
   Message,
@@ -29,7 +32,39 @@ const initialModel = Model.make({
   route: AppRoute.Home(),
   maybeThemePreference: Option.none(),
   systemTheme: "Light",
+  themeMenu: Menu.init({ id: "theme-menu" }),
 })
+
+const button = (preference: ThemePreference) =>
+  role("button", { name: `Color scheme: ${preference}` })
+
+const chooseColorScheme = (
+  current: ThemePreference,
+  next: ThemePreference,
+  theme: "Dark" | "Light",
+) =>
+  [
+    click(button(current)),
+    Command.resolve(Menu.FocusItems, Menu.Message.CompletedFocusItems()),
+    Mount.resolveAll(
+      [Menu.AnchorMenu, Menu.Message.CompletedAnchorMenu()],
+      [Menu.PortalMenuBackdrop, Menu.Message.CompletedPortalMenuBackdrop()],
+    ),
+    click(role("menuitem", { name: new RegExp(`^${next}`) })),
+    Mount.expectEnded(Menu.AnchorMenu, Menu.PortalMenuBackdrop),
+    Command.expectExact(
+      Menu.FocusButton({ id: "theme-menu" }),
+      ApplyTheme({ theme }),
+      SaveThemePreference({ preference: next }),
+    ),
+    Command.resolve(Menu.FocusButton, Menu.Message.CompletedFocusButton()),
+    Command.resolve(ApplyTheme, Message.CompletedApplyTheme()),
+    Command.resolve(
+      SaveThemePreference,
+      Message.CompletedSaveThemePreference(),
+    ),
+    expect(button(next)).toExist(),
+  ] as const
 
 describe("view", () => {
   test("renders the statically generated home page", () => {
@@ -52,7 +87,12 @@ describe("view", () => {
       expect(
         within(role("banner"), role("navigation", { name: "Main navigation" })),
       ).toExist(),
-      expect(within(role("banner"), label("Color scheme"))).toExist(),
+      expect(
+        within(
+          role("banner"),
+          role("button", { name: "Color scheme: System" }),
+        ),
+      ).toExist(),
       expect(
         within(role("main"), role("heading", { name: "gxuvain.dev" })),
       ).toExist(),
@@ -165,44 +205,14 @@ describe("view", () => {
     )
   })
 
-  test("lets a visitor choose a color scheme with a native select", () => {
+  test("lets a visitor pick a color scheme from a dropdown menu", () => {
     scene(
       { update, view },
       given(initialModel),
-      expect(label("Color scheme")).toHaveValue("System"),
-      change(label("Color scheme"), "Dark"),
-      expect(label("Color scheme")).toHaveValue("Dark"),
-      Command.expectExact(
-        ApplyTheme({ theme: "Dark" }),
-        SaveThemePreference({ preference: "Dark" }),
-      ),
-      Command.resolve(ApplyTheme, Message.CompletedApplyTheme()),
-      Command.resolve(
-        SaveThemePreference,
-        Message.CompletedSaveThemePreference(),
-      ),
-      change(label("Color scheme"), "Light"),
-      expect(label("Color scheme")).toHaveValue("Light"),
-      Command.expectExact(
-        ApplyTheme({ theme: "Light" }),
-        SaveThemePreference({ preference: "Light" }),
-      ),
-      Command.resolve(ApplyTheme, Message.CompletedApplyTheme()),
-      Command.resolve(
-        SaveThemePreference,
-        Message.CompletedSaveThemePreference(),
-      ),
-      change(label("Color scheme"), "System"),
-      expect(label("Color scheme")).toHaveValue("System"),
-      Command.expectExact(
-        ApplyTheme({ theme: "Light" }),
-        SaveThemePreference({ preference: "System" }),
-      ),
-      Command.resolve(ApplyTheme, Message.CompletedApplyTheme()),
-      Command.resolve(
-        SaveThemePreference,
-        Message.CompletedSaveThemePreference(),
-      ),
+      expect(button("System")).toExist(),
+      ...chooseColorScheme("System", "Dark", "Dark"),
+      ...chooseColorScheme("Dark", "Light", "Light"),
+      ...chooseColorScheme("Light", "System", "Light"),
     )
   })
 
@@ -215,24 +225,14 @@ describe("view", () => {
           systemTheme: () => "Dark",
         }),
       ),
-      expect(label("Color scheme")).toHaveValue("System"),
+      expect(button("System")).toExist(),
       Subscription.emit(Message.ChangedSystemTheme({ theme: "Light" })),
       Command.expectExact(ApplyTheme({ theme: "Light" })),
       Command.resolve(ApplyTheme, Message.CompletedApplyTheme()),
-      change(label("Color scheme"), "Dark"),
-      Command.expectExact(
-        ApplyTheme({ theme: "Dark" }),
-        SaveThemePreference({ preference: "Dark" }),
-      ),
-      Command.resolve(ApplyTheme, Message.CompletedApplyTheme()),
-      Command.resolve(
-        SaveThemePreference,
-        Message.CompletedSaveThemePreference(),
-      ),
+      ...chooseColorScheme("System", "Dark", "Dark"),
       Subscription.emit(Message.ChangedSystemTheme({ theme: "Light" })),
       Command.expectExact(ApplyTheme({ theme: "Dark" })),
       Command.resolve(ApplyTheme, Message.CompletedApplyTheme()),
-      expect(label("Color scheme")).toHaveValue("Dark"),
     )
   })
 })
