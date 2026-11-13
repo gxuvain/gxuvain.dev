@@ -5,7 +5,7 @@ import * as Markdown from "@foldkit/markdown"
 
 import type { Message } from "../main"
 import { blogRouter, postRouter } from "../route"
-import { type Post, formatPostDate, posts } from "./posts"
+import { type Post, formatPostDate } from "./posts"
 
 const bylineView = (post: Post, h: HtmlBuilder<Message>): Html =>
   h.p(
@@ -70,7 +70,10 @@ const postEntryView = (
     ],
   )
 
-export const indexView = (h: HtmlBuilder<Message>): Html =>
+export const indexView = (
+  posts: ReadonlyArray<Post>,
+  h: HtmlBuilder<Message>,
+): Html =>
   h.section(
     [h.Class("grid gap-8")],
     [

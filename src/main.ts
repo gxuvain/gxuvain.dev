@@ -17,7 +17,7 @@ import { BrowserKeyValueStore } from "@effect/platform-browser"
 import * as Markdown from "@foldkit/markdown"
 import { Menu } from "@foldkit/ui"
 
-import { findPostBySlug } from "./blog/posts"
+import { findPostBySlug, posts } from "./blog/posts"
 import * as Blog from "./blog/view"
 import {
   DARK_COLOR_SCHEME_QUERY,
@@ -323,7 +323,7 @@ const pageView = (model: Model, h: HtmlBuilder<Message>): Html =>
           h.div([h.Class("space-y-6")], Markdown.viewBlocks(about)),
         ],
       ),
-    Blog: () => Blog.indexView(h),
+    Blog: () => Blog.indexView(posts, h),
     Post: ({ slug }) =>
       Option.match(findPostBySlug(slug), {
         onNone: () => notFoundView(`/blog/${slug}`, h),

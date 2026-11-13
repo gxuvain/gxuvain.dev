@@ -3,8 +3,11 @@ import { existsSync } from "node:fs"
 import { join } from "node:path"
 import { describe, expect, test } from "vitest"
 
+import sampleDocument, {
+  frontmatter as sampleFrontmatter,
+} from "./fixtures/sample-post.md"
 import { PostFrontmatter } from "./frontmatter"
-import { findPostBySlug, posts } from "./posts"
+import { findPostBySlug, makePost, posts } from "./posts"
 
 const completePost = {
   title: "A post",
@@ -20,10 +23,32 @@ const completePost = {
 const decode = Schema.decodeUnknownSync(PostFrontmatter)
 
 describe("blog posts", () => {
-  test("discovers the published post from Markdown", () => {
-    expect(posts.map(post => post.slug)).toContain("hello-world")
-    expect(Option.isSome(findPostBySlug("hello-world"))).toBe(true)
+  test("every published post can be found by its slug", () => {
+    posts.forEach(post => {
+      expect(Option.isSome(findPostBySlug(post.slug)), post.slug).toBe(true)
+    })
     expect(Option.isNone(findPostBySlug("missing"))).toBe(true)
+  })
+
+  test("builds a post from Markdown", () => {
+    const post = makePost("sample-post", sampleFrontmatter, sampleDocument)
+    expect(post.frontmatter.title).toBe("Sample post")
+  })
+
+  test("rejects a cover image outside the post's own folder", () => {
+    expect(() =>
+      makePost(
+        "sample-post",
+        { ...completePost, image: "/blog/other-post/cover.svg" },
+        sampleDocument,
+      ),
+    ).toThrow()
+  })
+
+  test("rejects an invalid slug", () => {
+    expect(() =>
+      makePost("Not A Slug", sampleFrontmatter, sampleDocument),
+    ).toThrow()
   })
 
   test("every cover exists in public at the declared path", () => {

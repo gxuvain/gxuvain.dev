@@ -35,19 +35,18 @@ const pathToSlug = (path: string): string =>
     String.replace(/\.md$/, ""),
   )
 
-const toPost = (path: string, rawDocument: unknown): Post => {
-  const slug = pathToSlug(path)
+export const makePost = (
+  slug: string,
+  rawFrontmatter: unknown,
+  rawDocument: unknown,
+): Post => {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
     throw new Error(`Invalid blog post slug: ${slug}`)
   }
 
-  const rawFrontmatter = Option.getOrThrowWith(
-    Option.flatMap(Record.get(frontmatterByPath, path), Option.fromNullishOr),
-    () => new Error(`Blog post ${path} has no frontmatter`),
-  )
   const frontmatter = Schema.decodeUnknownSync(PostFrontmatter)(rawFrontmatter)
   if (!frontmatter.image.startsWith(`/blog/${slug}/`)) {
-    throw new Error(`Blog post ${path} must use its own cover image`)
+    throw new Error(`Blog post ${slug} must use its own cover image`)
   }
 
   return {
@@ -56,6 +55,16 @@ const toPost = (path: string, rawDocument: unknown): Post => {
     document: Markdown.decodeDocument(rawDocument),
   }
 }
+
+const toPost = (path: string, rawDocument: unknown): Post =>
+  makePost(
+    pathToSlug(path),
+    Option.getOrThrowWith(
+      Option.flatMap(Record.get(frontmatterByPath, path), Option.fromNullishOr),
+      () => new Error(`Blog post ${path} has no frontmatter`),
+    ),
+    rawDocument,
+  )
 
 const byDateThenSlugDescending = Order.flip(
   Order.combine(
