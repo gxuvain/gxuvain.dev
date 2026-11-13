@@ -287,10 +287,34 @@ const notFoundView = (path: string, h: HtmlBuilder<Message>): Html =>
     ],
   )
 
+const homeLogoView = (h: HtmlBuilder<Message>): Html =>
+  h.div(
+    [h.Class("home-logo")],
+    [
+      h.img([
+        h.Src("/logo-white.svg"),
+        h.Alt(""),
+        h.Width("80"),
+        h.Height("80"),
+        h.Class("home-logo-light"),
+      ]),
+      h.img([
+        h.Src("/logo-dark.svg"),
+        h.Alt(""),
+        h.Width("80"),
+        h.Height("80"),
+        h.Class("home-logo-dark"),
+      ]),
+    ],
+  )
+
 const pageView = (model: Model, h: HtmlBuilder<Message>): Html =>
   AppRoute.match(model.route, {
     Home: () =>
-      h.section([h.Class("home-prose grid gap-4")], Markdown.viewBlocks(home)),
+      h.section(
+        [h.Class("home-prose grid gap-4")],
+        [homeLogoView(h), ...Markdown.viewBlocks(home)],
+      ),
     About: () =>
       h.section(
         [h.Class("grid gap-4")],

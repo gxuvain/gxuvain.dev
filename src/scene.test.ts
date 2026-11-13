@@ -13,7 +13,9 @@ import {
   within,
 } from "foldkit/scene"
 import { modifyFields } from "foldkit/struct"
-import { describe, test } from "vitest"
+import { existsSync } from "node:fs"
+import { join } from "node:path"
+import { describe, expect as expectFile, test } from "vitest"
 
 import { Menu } from "@foldkit/ui"
 
@@ -67,10 +69,19 @@ const chooseColorScheme = (
   ] as const
 
 describe("view", () => {
+  test.each(["logo-white.svg", "logo-dark.svg"])(
+    "the home logo %s exists in public",
+    file => {
+      expectFile(existsSync(join("public", file))).toBe(true)
+    },
+  )
+
   test("renders the statically generated home page", () => {
     scene(
       { update, view },
       given(initialModel),
+      expect(selector(".home-logo-light")).toHaveAttr("src", "/logo-white.svg"),
+      expect(selector(".home-logo-dark")).toHaveAttr("src", "/logo-dark.svg"),
       expect(role("heading", { name: "gxuvain.dev" })).toExist(),
       expect(text("Hey! I'm Gauvain", { exact: false })).toExist(),
       expect(
